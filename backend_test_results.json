@@ -1,0 +1,81 @@
+{
+  "summary": {
+    "total": 10,
+    "passed": 1,
+    "failed": 9,
+    "success_rate": 10.0
+  },
+  "results": [
+    {
+      "test": "API Root Endpoint",
+      "success": false,
+      "details": "",
+      "error": "HTTP 502: ",
+      "timestamp": "2025-08-02T19:22:42.106026"
+    },
+    {
+      "test": "API Keys Configuration",
+      "success": true,
+      "details": "Both OpenAI and Gemini API keys configured",
+      "error": "",
+      "timestamp": "2025-08-02T19:22:42.106483"
+    },
+    {
+      "test": "AI Providers Configuration",
+      "success": false,
+      "details": "",
+      "error": "HTTP 502: ",
+      "timestamp": "2025-08-02T19:22:42.121672"
+    },
+    {
+      "test": "Website Types Endpoint",
+      "success": false,
+      "details": "",
+      "error": "HTTP 502: ",
+      "timestamp": "2025-08-02T19:22:42.136778"
+    },
+    {
+      "test": "Database Connectivity",
+      "success": false,
+      "details": "",
+      "error": "Failed to create status: HTTP 502",
+      "timestamp": "2025-08-02T19:22:42.154162"
+    },
+    {
+      "test": "OpenAI Website Generation",
+      "success": false,
+      "details": "",
+      "error": "HTTP 502: ",
+      "timestamp": "2025-08-02T19:22:42.174935"
+    },
+    {
+      "test": "Gemini Website Generation",
+      "success": false,
+      "details": "",
+      "error": "HTTP 502: ",
+      "timestamp": "2025-08-02T19:22:42.192882"
+    },
+    {
+      "test": "Provider Comparison Mode",
+      "success": false,
+      "details": "",
+      "error": "HTTP 502: ",
+      "timestamp": "2025-08-02T19:22:42.206744"
+    },
+    {
+      "test": "Projects List Endpoint",
+      "success": false,
+      "details": "",
+      "error": "HTTP 502: ",
+      "timestamp": "2025-08-02T19:22:42.227311"
+    },
+    {
+      "test": "Project Retrieval",
+      "success": false,
+      "details": "",
+      "error": "No projects available to test",
+      "timestamp": "2025-08-02T19:22:42.227566"
+    }
+  ],
+  "timestamp": "2025-08-02T19:22:42.227792"
+}
