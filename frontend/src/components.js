@@ -363,9 +363,20 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
       });
 
       if (response.data.success) {
+        console.log('Comparison completed successfully:', response.data);
         setComparisonResults(response.data);
-        onWebsiteGenerated(response.data);
+        // Add both provider results as separate projects
+        const openaiResult = response.data.results.openai;
+        const geminiResult = response.data.results.gemini;
+        
+        if (openaiResult.success) {
+          onWebsiteGenerated(openaiResult);
+        }
+        if (geminiResult.success) {
+          onWebsiteGenerated(geminiResult);
+        }
       } else {
+        console.error('Comparison failed:', response.data);
         alert('Error comparing providers: ' + response.data.error);
       }
     } catch (error) {
