@@ -61,34 +61,34 @@ export const HeroSection = () => {
       <div className="container">
         <div className="hero-content">
           <h1 className="hero-title">
-            Create <span className="gradient-text">Professional Websites</span>
-            <br />with AI in <span className="highlight">One Click</span>
+            Crea <span className="gradient-text">Sitios Web Profesionales</span>
+            <br />con IA en <span className="highlight">Un Solo Clic</span>
           </h1>
           <p className="hero-description">
-            Harness the power of OpenAI GPT-4.1 and Google Gemini 2.5 Pro to generate 
-            stunning, professional websites that look like they were crafted by expert designers.
+            Aprovecha el poder de OpenAI GPT-4.1 y Google Gemini 2.5 Pro para generar 
+            sitios web impresionantes y profesionales que parecen creados por diseñadores expertos.
           </p>
           <div className="hero-stats">
             <div className="stat">
               <div className="stat-number">50K+</div>
-              <div className="stat-label">Websites Generated</div>
+              <div className="stat-label">Sitios Generados</div>
             </div>
             <div className="stat">
               <div className="stat-number">2</div>
-              <div className="stat-label">AI Providers</div>
+              <div className="stat-label">Proveedores IA</div>
             </div>
             <div className="stat">
               <div className="stat-number">5</div>
-              <div className="stat-label">Website Types</div>
+              <div className="stat-label">Tipos de Sitio</div>
             </div>
           </div>
         </div>
         
         <div className="hero-visual">
           <div className="floating-cards">
-            <div className="card card-1">💼 Business</div>
-            <div className="card card-2">🎨 Portfolio</div>
-            <div className="card card-3">🛒 E-Commerce</div>
+            <div className="card card-1">💼 Empresarial</div>
+            <div className="card card-2">🎨 Portafolio</div>
+            <div className="card card-3">🛒 Tienda Online</div>
             <div className="card card-4">📝 Blog</div>
           </div>
         </div>
