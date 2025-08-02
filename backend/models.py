@@ -24,10 +24,10 @@ class WebsiteFile(BaseModel):
 class GenerationMetadata(BaseModel):
     generated_at: datetime
     prompt: str
-    enhanced_prompt: str
+    enhanced_prompt: Optional[str] = None
     provider: str
     model: str
-    website_type: str
+    website_type: Optional[str] = "landing"
 
 class WebsiteProject(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
