@@ -520,6 +520,11 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
 
   const openProject = (project) => {
     console.log('Abriendo proyecto:', project);
+    console.log('Estructura de archivos:', project.files);
+    console.log('Tipo de archivos:', typeof project.files);
+    if (project.files && Array.isArray(project.files)) {
+      console.log('Archivos encontrados:', project.files.map(f => f.filename));
+    }
     setSelectedProject(project);
   };
 
