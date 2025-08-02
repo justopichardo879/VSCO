@@ -3,7 +3,7 @@ from typing import List, Optional, Dict, Any
 import os
 import logging
 from datetime import datetime
-from .models import WebsiteProject, WebsiteFile, GenerationMetadata
+from models import WebsiteProject, WebsiteFile, GenerationMetadata
 
 logger = logging.getLogger(__name__)
 
