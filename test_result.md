@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Usuario quiere crear una herramienta ultra profesional que genere websites completos desde un solo prompt usando OpenAI GPT-4.1 y Google Gemini 2.5 Pro. Debe tener interfaz profesional con un solo clic para generar websites de nivel empresarial."
+user_problem_statement: "Usuario quiere crear una herramienta ultra profesional que genere websites completos desde un solo prompt usando OpenAI GPT-4.1 y Google Gemini 2.5 Pro. Debe tener interfaz profesional con un solo clic para generar websites de nivel empresarial. ACTUALIZACIÓN: Usuario solicita toda la interfaz en español y funciones de borrar y modificar proyectos."
 
 backend:
   - task: "Multi-AI Integration Service"
