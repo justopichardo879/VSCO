@@ -3,6 +3,14 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 import uuid
 
+class StatusCheck(BaseModel):
+    status: str
+    timestamp: str
+
+class StatusCheckCreate(BaseModel):
+    status: str
+    timestamp: str
+
 class WebsiteGenerationRequest(BaseModel):
     prompt: str = Field(..., description="User prompt for website generation")
     website_type: str = Field(default="landing", description="Type of website (landing, business, portfolio, ecommerce, blog)")
