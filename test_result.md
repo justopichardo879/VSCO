@@ -208,7 +208,7 @@ frontend:
     file: "components.js"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -216,6 +216,9 @@ frontend:
       - working: false
         agent: "user"
         comment: "Usuario reporta que el botón 'view project' no hace nada y no presenta el proyecto. No funciona la visualización de proyectos."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE IDENTIFIED: ProjectGallery component doesn't fetch projects from API. Backend API works correctly (/api/projects returns 6 projects), but frontend ProjectGallery only shows projects passed as props from newly generated websites. Component needs to fetch existing projects from API on mount. The 'View Project' button works correctly - the issue is no projects are displayed to view."
 
 metadata:
   created_by: "main_agent"
