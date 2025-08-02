@@ -598,9 +598,21 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
   };
 
   const downloadSingleFile = (project, fileName) => {
-    const fileContent = project.files?.[fileName];
+    let fileContent = null;
+    
+    // Try to find file content in different structures
+    if (project.files && Array.isArray(project.files)) {
+      const file = project.files.find(f => f.filename === fileName);
+      if (file) {
+        fileContent = file.content;
+      }
+    } else if (project.files && typeof project.files === 'object') {
+      fileContent = project.files[fileName];
+    }
+    
     if (!fileContent) {
       alert(`El archivo ${fileName} no está disponible`);
+      console.log('Archivo no encontrado:', fileName, 'en proyecto:', project);
       return;
     }
 
@@ -613,6 +625,8 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    
+    console.log(`Archivo ${fileName} descargado exitosamente`);
   };
 
   const renderProjectPreview = (project) => {
