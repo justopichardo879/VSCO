@@ -465,11 +465,52 @@ export const ProjectGallery = ({ projects }) => {
   const [selectedProject, setSelectedProject] = useState(null);
 
   const openProject = (project) => {
+    console.log('Opening project:', project);
     setSelectedProject(project);
   };
 
   const closeProject = () => {
     setSelectedProject(null);
+  };
+
+  const downloadProject = (project, fileType = 'all') => {
+    if (!project.files) {
+      alert('No files available for download');
+      return;
+    }
+
+    if (fileType === 'all') {
+      // Download all files as a zip would be ideal, but for now we'll download HTML
+      downloadSingleFile(project, 'index.html');
+    } else {
+      downloadSingleFile(project, fileType);
+    }
+  };
+
+  const downloadSingleFile = (project, fileName) => {
+    const fileContent = project.files?.[fileName];
+    if (!fileContent) {
+      alert(`File ${fileName} not available`);
+      return;
+    }
+
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const renderProjectPreview = (project) => {
+    // Check if project has files and HTML content
+    if (!project.files || !project.files['index.html']) {
+      return '<div style="padding: 20px; text-align: center; color: #666;">Preview not available - No HTML content</div>';
+    }
+    return project.files['index.html'];
   };
 
   return (
@@ -492,7 +533,7 @@ export const ProjectGallery = ({ projects }) => {
               <div key={index} className="project-card" onClick={() => openProject(project)}>
                 <div className="project-preview">
                   <iframe 
-                    srcDoc={project.files?.['index.html'] || '<p>Preview not available</p>'}
+                    srcDoc={renderProjectPreview(project)}
                     className="project-frame"
                     title={`Project ${index + 1}`}
                   />
@@ -501,6 +542,9 @@ export const ProjectGallery = ({ projects }) => {
                   <h3 className="project-title">Website {index + 1}</h3>
                   <p className="project-provider">
                     Generated with {project.provider === 'openai' ? '🤖 OpenAI' : '💎 Gemini'}
+                  </p>
+                  <p className="project-type">
+                    Type: {project.metadata?.website_type || project.website_type || 'landing'}
                   </p>
                   <div className="project-actions" onClick={e => e.stopPropagation()}>
                     <button className="action-button" onClick={() => openProject(project)}>View</button>
@@ -517,18 +561,23 @@ export const ProjectGallery = ({ projects }) => {
             <div className="modal-content" onClick={e => e.stopPropagation()}>
               <button className="modal-close" onClick={closeProject}>×</button>
               <h3>Project Details</h3>
+              <div className="project-details">
+                <p><strong>Provider:</strong> {selectedProject.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : '💎 Google Gemini'}</p>
+                <p><strong>Type:</strong> {selectedProject.metadata?.website_type || selectedProject.website_type || 'landing'}</p>
+                <p><strong>Generated:</strong> {selectedProject.metadata?.generated_at ? new Date(selectedProject.metadata.generated_at).toLocaleDateString() : 'Unknown'}</p>
+              </div>
               <div className="modal-preview">
                 <iframe 
-                  srcDoc={selectedProject.files?.['index.html'] || '<p>Preview not available</p>'}
+                  srcDoc={renderProjectPreview(selectedProject)}
                   className="full-preview"
                   title="Full project preview"
                 />
               </div>
               <div className="modal-actions">
-                <button className="action-button">Download HTML</button>
-                <button className="action-button">Download CSS</button>
-                <button className="action-button">Download JS</button>
-                <button className="action-button primary">Download All</button>
+                <button className="action-button" onClick={() => downloadSingleFile(selectedProject, 'index.html')}>Download HTML</button>
+                <button className="action-button" onClick={() => downloadSingleFile(selectedProject, 'styles.css')}>Download CSS</button>
+                <button className="action-button" onClick={() => downloadSingleFile(selectedProject, 'script.js')}>Download JS</button>
+                <button className="action-button primary" onClick={() => downloadProject(selectedProject)}>Download All</button>
               </div>
             </div>
           </div>
