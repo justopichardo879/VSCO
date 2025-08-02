@@ -167,10 +167,12 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
       });
 
       if (response.data.success) {
+        console.log('Website generated successfully:', response.data);
         onWebsiteGenerated(response.data);
         setPrompt('');
         alert('🎉 Website generated successfully! Check the Projects tab to view it.');
       } else {
+        console.error('Generation failed:', response.data);
         alert('Error generating website: ' + response.data.error);
       }
     } catch (error) {
