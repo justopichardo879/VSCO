@@ -22,28 +22,28 @@ export const Header = ({ activeView, onViewChange }) => {
               onClick={() => onViewChange('generator')}
             >
               <span className="nav-icon">⚡</span>
-              Generator
+              Generador
             </button>
             <button 
               className={`nav-item ${activeView === 'comparison' ? 'active' : ''}`}
               onClick={() => onViewChange('comparison')}
             >
               <span className="nav-icon">⚖️</span>
-              Compare AIs
+              Comparar IAs
             </button>
             <button 
               className={`nav-item ${activeView === 'projects' ? 'active' : ''}`}
               onClick={() => onViewChange('projects')}
             >
               <span className="nav-icon">📁</span>
-              Projects
+              Proyectos
             </button>
             <button 
               className={`nav-item ${activeView === 'about' ? 'active' : ''}`}
               onClick={() => onViewChange('about')}
             >
               <span className="nav-icon">ℹ️</span>
-              About
+              Acerca de
             </button>
           </nav>
         </div>
