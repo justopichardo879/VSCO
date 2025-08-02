@@ -474,8 +474,43 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
 // =====================================
 // PROJECT GALLERY COMPONENT
 // =====================================
-export const ProjectGallery = ({ projects }) => {
+export const ProjectGallery = ({ projects: propProjects = [] }) => {
   const [selectedProject, setSelectedProject] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch projects from API when component mounts
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        console.log('Fetching projects from API...');
+        
+        const response = await axios.get(`${API_URL}/api/projects`);
+        console.log('Projects fetched:', response.data);
+        
+        if (response.data && response.data.projects) {
+          const apiProjects = response.data.projects;
+          // Merge API projects with any prop projects (newly generated ones)
+          const allProjects = [...apiProjects, ...propProjects];
+          setProjects(allProjects);
+          console.log('Total projects loaded:', allProjects.length);
+        } else {
+          setProjects(propProjects);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setError('Failed to load projects from database');
+        // Fallback to prop projects if API fails
+        setProjects(propProjects);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, [propProjects]);
 
   const openProject = (project) => {
     console.log('Opening project:', project);
@@ -534,7 +569,19 @@ export const ProjectGallery = ({ projects }) => {
           <p>Browse and manage your AI-generated projects</p>
         </div>
 
-        {projects.length === 0 ? (
+        {loading ? (
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p>Loading your projects...</p>
+          </div>
+        ) : error ? (
+          <div className="error-state">
+            <div className="error-icon">⚠️</div>
+            <h3>Error Loading Projects</h3>
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>Try Again</button>
+          </div>
+        ) : projects.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📁</div>
             <h3>No Projects Yet</h3>
@@ -543,18 +590,18 @@ export const ProjectGallery = ({ projects }) => {
         ) : (
           <div className="projects-grid">
             {projects.map((project, index) => (
-              <div key={index} className="project-card" onClick={() => openProject(project)}>
+              <div key={project.id || index} className="project-card" onClick={() => openProject(project)}>
                 <div className="project-preview">
                   <iframe 
                     srcDoc={renderProjectPreview(project)}
                     className="project-frame"
-                    title={`Project ${index + 1}`}
+                    title={`Project ${project.name || index + 1}`}
                   />
                 </div>
                 <div className="project-info">
-                  <h3 className="project-title">Website {index + 1}</h3>
+                  <h3 className="project-title">{project.name || `Website ${index + 1}`}</h3>
                   <p className="project-provider">
-                    Generated with {project.provider === 'openai' ? '🤖 OpenAI' : '💎 Gemini'}
+                    Generated with {project.metadata?.provider === 'openai' ? '🤖 OpenAI' : project.provider === 'openai' ? '🤖 OpenAI' : '💎 Gemini'}
                   </p>
                   <p className="project-type">
                     Type: {project.metadata?.website_type || project.website_type || 'landing'}
@@ -575,9 +622,11 @@ export const ProjectGallery = ({ projects }) => {
               <button className="modal-close" onClick={closeProject}>×</button>
               <h3>Project Details</h3>
               <div className="project-details">
-                <p><strong>Provider:</strong> {selectedProject.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : '💎 Google Gemini'}</p>
+                <p><strong>Name:</strong> {selectedProject.name || 'Generated Website'}</p>
+                <p><strong>Provider:</strong> {selectedProject.metadata?.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : selectedProject.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : '💎 Google Gemini'}</p>
                 <p><strong>Type:</strong> {selectedProject.metadata?.website_type || selectedProject.website_type || 'landing'}</p>
-                <p><strong>Generated:</strong> {selectedProject.metadata?.generated_at ? new Date(selectedProject.metadata.generated_at).toLocaleDateString() : 'Unknown'}</p>
+                <p><strong>Generated:</strong> {selectedProject.metadata?.generated_at ? new Date(selectedProject.metadata.generated_at).toLocaleDateString() : selectedProject.created_at ? new Date(selectedProject.created_at).toLocaleDateString() : 'Unknown'}</p>
+                {selectedProject.description && <p><strong>Description:</strong> {selectedProject.description}</p>}
               </div>
               <div className="modal-preview">
                 <iframe 
