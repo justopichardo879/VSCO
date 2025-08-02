@@ -42,8 +42,22 @@ function App() {
         {activeView === 'about' && (
           <div className="about-section">
             <div className="container">
-              <h2>About Professional Website Generator</h2>
-              <p>Create stunning, professional websites with the power of AI</p>
+              <h2>Acerca de WebsiteGen Pro</h2>
+              <p>Crea sitios web impresionantes y profesionales con el poder de la IA</p>
+              <div className="about-content">
+                <div className="about-feature">
+                  <h3>🤖 Inteligencia Artificial Avanzada</h3>
+                  <p>Utilizamos los modelos más avanzados de OpenAI GPT-4.1 y Google Gemini 2.5 Pro para generar código de calidad profesional.</p>
+                </div>
+                <div className="about-feature">
+                  <h3>🎨 Diseños Profesionales</h3>
+                  <p>Cada sitio web generado cumple con estándares de diseño empresarial y está optimizado para todos los dispositivos.</p>
+                </div>
+                <div className="about-feature">
+                  <h3>⚡ Velocidad Increíble</h3>
+                  <p>Genera sitios web completos en cuestión de segundos, no horas o días como el desarrollo tradicional.</p>
+                </div>
+              </div>
             </div>
           </div>
         )}

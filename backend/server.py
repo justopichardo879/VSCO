@@ -206,6 +206,20 @@ async def get_project(project_id: str):
         logger.error(f"Error getting project {project_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.put("/projects/{project_id}")
+async def update_project(project_id: str, update_data: dict):
+    """Update a project"""
+    try:
+        success = await db_service.update_project(project_id, update_data)
+        if not success:
+            raise HTTPException(status_code=404, detail="Project not found")
+        return {"success": True, "message": "Project updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating project {project_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.delete("/projects/{project_id}")
 async def delete_project(project_id: str):
     """Delete a project"""

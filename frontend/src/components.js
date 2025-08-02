@@ -120,7 +120,7 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
       const response = await axios.get(`${API_URL}/api/website-types`);
       setWebsiteTypes(response.data.types);
     } catch (error) {
-      console.error('Error fetching website types:', error);
+      console.error('Error al obtener tipos de sitio web:', error);
     }
   };
 
@@ -129,13 +129,13 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
       const response = await axios.get(`${API_URL}/api/ai-providers`);
       setProviders(response.data.providers);
     } catch (error) {
-      console.error('Error fetching providers:', error);
+      console.error('Error al obtener proveedores:', error);
     }
   };
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
-      alert('Please enter a description for your website');
+      alert('Por favor ingresa una descripción para tu sitio web');
       return;
     }
 
@@ -143,16 +143,16 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
     setGenerationProgress(0);
     
     const steps = [
-      'Initializing AI models...',
-      'Processing your requirements...',
-      'Generating HTML structure...',
-      'Creating professional styles...',
-      'Adding interactive elements...',
-      'Optimizing for mobile...',
-      'Finalizing your website...'
+      'Inicializando modelos de IA...',
+      'Procesando tus requerimientos...',
+      'Generando estructura HTML...',
+      'Creando estilos profesionales...',
+      'Agregando elementos interactivos...',
+      'Optimizando para móviles...',
+      'Finalizando tu sitio web...'
     ];
 
-    // Simulate progress
+    // Simular progreso
     for (let i = 0; i < steps.length; i++) {
       setCurrentStep(steps[i]);
       setGenerationProgress((i + 1) / steps.length * 100);
@@ -167,17 +167,17 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
       });
 
       if (response.data.success) {
-        console.log('Website generated successfully:', response.data);
+        console.log('Sitio web generado exitosamente:', response.data);
         onWebsiteGenerated(response.data);
         setPrompt('');
-        alert('🎉 Website generated successfully! Check the Projects tab to view it.');
+        alert('🎉 ¡Sitio web generado exitosamente! Revisa la pestaña Proyectos para verlo.');
       } else {
-        console.error('Generation failed:', response.data);
-        alert('Error generating website: ' + response.data.error);
+        console.error('Generación fallida:', response.data);
+        alert('Error generando sitio web: ' + response.data.error);
       }
     } catch (error) {
-      console.error('Generation error:', error);
-      alert('Failed to generate website. Please try again.');
+      console.error('Error de generación:', error);
+      alert('Error al generar sitio web. Por favor intenta nuevamente.');
     } finally {
       setIsGenerating(false);
       setGenerationProgress(0);
@@ -189,18 +189,18 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
     <section className="generator-section">
       <div className="container">
         <div className="generator-header">
-          <h2>Generate Your Professional Website</h2>
-          <p>Describe your vision and watch AI create a stunning website</p>
+          <h2>Genera Tu Sitio Web Profesional</h2>
+          <p>Describe tu visión y observa cómo la IA crea un sitio web impresionante</p>
         </div>
 
         <div className="generator-form">
           <div className="form-group">
-            <label htmlFor="prompt">Website Description</label>
+            <label htmlFor="prompt">Descripción del Sitio Web</label>
             <textarea
               id="prompt"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe your website... e.g., 'A modern SaaS landing page for project management software with pricing tiers, testimonials, and clean design'"
+              placeholder="Describe tu sitio web... ej: 'Una landing page moderna para software de gestión de proyectos con planes de precios, testimonios y diseño limpio'"
               rows="4"
               className="form-control"
               disabled={isGenerating}
@@ -209,7 +209,7 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="websiteType">Website Type</label>
+              <label htmlFor="websiteType">Tipo de Sitio Web</label>
               <select
                 id="websiteType"
                 value={websiteType}
@@ -219,14 +219,18 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
               >
                 {websiteTypes.map(type => (
                   <option key={type.id} value={type.id}>
-                    {type.icon} {type.name}
+                    {type.icon} {type.name === 'Landing Page' ? 'Página de Aterrizaje' :
+                     type.name === 'Business Website' ? 'Sitio Empresarial' :
+                     type.name === 'Portfolio' ? 'Portafolio' :
+                     type.name === 'E-Commerce' ? 'Tienda Online' :
+                     type.name === 'Blog' ? 'Blog' : type.name}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="form-group">
-              <label htmlFor="provider">AI Provider</label>
+              <label htmlFor="provider">Proveedor de IA</label>
               <select
                 id="provider"
                 value={provider}
@@ -251,12 +255,12 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
             {isGenerating ? (
               <>
                 <span className="spinner"></span>
-                Generating...
+                Generando...
               </>
             ) : (
               <>
                 <span className="button-icon">✨</span>
-                Generate Professional Website
+                Generar Sitio Web Profesional
               </>
             )}
           </button>
@@ -285,33 +289,33 @@ export const FeatureGrid = () => {
   const features = [
     {
       icon: '🤖',
-      title: 'Dual AI Power',
-      description: 'Leverage both OpenAI GPT-4.1 and Google Gemini for optimal results'
+      title: 'Doble Poder de IA',
+      description: 'Aprovecha tanto OpenAI GPT-4.1 como Google Gemini para resultados óptimos'
     },
     {
       icon: '📱',
-      title: 'Mobile-First Design',
-      description: 'Every website is optimized for mobile devices and tablets'
+      title: 'Diseño Mobile-First',
+      description: 'Cada sitio web está optimizado para dispositivos móviles y tablets'
     },
     {
       icon: '⚡',
-      title: 'Lightning Fast',
-      description: 'Generate complete websites in under 30 seconds'
+      title: 'Ultra Rápido',
+      description: 'Genera sitios web completos en menos de 30 segundos'
     },
     {
       icon: '🎨',
-      title: 'Professional Design',
-      description: 'Enterprise-grade designs that look crafted by experts'
+      title: 'Diseño Profesional',
+      description: 'Diseños de nivel empresarial que parecen creados por expertos'
     },
     {
       icon: '🔧',
-      title: 'Full Customization',
-      description: 'Get complete HTML, CSS, and JavaScript files to customize'
+      title: 'Personalización Total',
+      description: 'Obtén archivos HTML, CSS y JavaScript completos para personalizar'
     },
     {
       icon: '📊',
-      title: 'Analytics Ready',
-      description: 'Built-in tracking and SEO optimization for better performance'
+      title: 'Listo para Analytics',
+      description: 'Seguimiento integrado y optimización SEO para mejor rendimiento'
     }
   ];
 
@@ -319,8 +323,8 @@ export const FeatureGrid = () => {
     <section className="features-section">
       <div className="container">
         <div className="section-header">
-          <h2>Powerful Features for Professional Results</h2>
-          <p>Everything you need to create stunning websites</p>
+          <h2>Características Poderosas para Resultados Profesionales</h2>
+          <p>Todo lo que necesitas para crear sitios web impresionantes</p>
         </div>
 
         <div className="features-grid">
@@ -348,7 +352,7 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
 
   const handleCompare = async () => {
     if (!prompt.trim()) {
-      alert('Please enter a description for your website');
+      alert('Por favor ingresa una descripción para tu sitio web');
       return;
     }
 
@@ -359,13 +363,13 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
       const response = await axios.post(`${API_URL}/api/generate-website`, {
         prompt,
         website_type: websiteType,
-        provider: null // null triggers comparison mode
+        provider: null // null activa el modo de comparación
       });
 
       if (response.data.success) {
-        console.log('Comparison completed successfully:', response.data);
+        console.log('Comparación completada exitosamente:', response.data);
         setComparisonResults(response.data);
-        // Add both provider results as separate projects
+        // Agregar resultados de ambos proveedores como proyectos separados
         const openaiResult = response.data.results.openai;
         const geminiResult = response.data.results.gemini;
         
@@ -376,12 +380,12 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
           onWebsiteGenerated(geminiResult);
         }
       } else {
-        console.error('Comparison failed:', response.data);
-        alert('Error comparing providers: ' + response.data.error);
+        console.error('Comparación fallida:', response.data);
+        alert('Error comparando proveedores: ' + response.data.error);
       }
     } catch (error) {
-      console.error('Comparison error:', error);
-      alert('Failed to compare providers. Please try again.');
+      console.error('Error de comparación:', error);
+      alert('Error al comparar proveedores. Por favor intenta nuevamente.');
     } finally {
       setIsComparing(false);
     }
@@ -391,8 +395,8 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
     <section className="comparison-section">
       <div className="container">
         <div className="section-header">
-          <h2>AI Provider Comparison</h2>
-          <p>Generate with both AIs and see which one creates better results for your needs</p>
+          <h2>Comparación de Proveedores IA</h2>
+          <p>Genera con ambas IAs y ve cuál crea mejores resultados para tus necesidades</p>
         </div>
 
         <div className="comparison-form">
@@ -400,7 +404,7 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe your website for AI comparison..."
+              placeholder="Describe tu sitio web para comparación de IA..."
               rows="4"
               className="form-control"
               disabled={isComparing}
@@ -414,10 +418,10 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
               className="form-control"
               disabled={isComparing}
             >
-              <option value="landing">🚀 Landing Page</option>
-              <option value="business">🏢 Business Website</option>
-              <option value="portfolio">🎨 Portfolio</option>
-              <option value="ecommerce">🛒 E-Commerce</option>
+              <option value="landing">🚀 Página de Aterrizaje</option>
+              <option value="business">🏢 Sitio Empresarial</option>
+              <option value="portfolio">🎨 Portafolio</option>
+              <option value="ecommerce">🛒 Tienda Online</option>
               <option value="blog">📝 Blog</option>
             </select>
           </div>
@@ -430,12 +434,12 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
             {isComparing ? (
               <>
                 <span className="spinner"></span>
-                Comparing AIs...
+                Comparando IAs...
               </>
             ) : (
               <>
                 <span className="button-icon">⚖️</span>
-                Compare Both AIs
+                Comparar Ambas IAs
               </>
             )}
           </button>
@@ -443,7 +447,7 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
 
         {comparisonResults && (
           <div className="comparison-results">
-            <h3>Comparison Results</h3>
+            <h3>Resultados de la Comparación</h3>
             <div className="results-grid">
               {Object.entries(comparisonResults.results).map(([provider, result]) => (
                 <div key={provider} className="result-card">
@@ -452,14 +456,14 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
                   </h4>
                   <div className="result-preview">
                     <iframe 
-                      srcDoc={result.files?.['index.html'] || '<p>No preview available</p>'}
+                      srcDoc={result.files?.['index.html'] || '<p>Vista previa no disponible</p>'}
                       className="preview-frame"
-                      title={`${provider} preview`}
+                      title={`Vista previa ${provider}`}
                     />
                   </div>
                   <div className="result-actions">
-                    <button className="action-button">View Code</button>
-                    <button className="action-button primary">Choose This</button>
+                    <button className="action-button">Ver Código</button>
+                    <button className="action-button primary">Elegir Este</button>
                   </div>
                 </div>
               ))}
@@ -479,56 +483,109 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingProject, setEditingProject] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', description: '' });
 
-  // Fetch projects from API when component mounts
+  // Cargar proyectos de la API cuando se monta el componente
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true);
-        console.log('Fetching projects from API...');
-        
-        const response = await axios.get(`${API_URL}/api/projects`);
-        console.log('Projects fetched:', response.data);
-        
-        if (response.data && response.data.projects) {
-          const apiProjects = response.data.projects;
-          // Merge API projects with any prop projects (newly generated ones)
-          const allProjects = [...apiProjects, ...propProjects];
-          setProjects(allProjects);
-          console.log('Total projects loaded:', allProjects.length);
-        } else {
-          setProjects(propProjects);
-        }
-      } catch (error) {
-        console.error('Error fetching projects:', error);
-        setError('Failed to load projects from database');
-        // Fallback to prop projects if API fails
-        setProjects(propProjects);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProjects();
   }, [propProjects]);
 
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      console.log('Cargando proyectos desde la API...');
+      
+      const response = await axios.get(`${API_URL}/api/projects`);
+      console.log('Proyectos cargados:', response.data);
+      
+      if (response.data && response.data.projects) {
+        const apiProjects = response.data.projects;
+        // Combinar proyectos de API con proyectos de props (recién generados)
+        const allProjects = [...apiProjects, ...propProjects];
+        setProjects(allProjects);
+        console.log('Total de proyectos cargados:', allProjects.length);
+      } else {
+        setProjects(propProjects);
+      }
+    } catch (error) {
+      console.error('Error cargando proyectos:', error);
+      setError('Error al cargar proyectos de la base de datos');
+      // Respaldo a proyectos de props si la API falla
+      setProjects(propProjects);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const openProject = (project) => {
-    console.log('Opening project:', project);
+    console.log('Abriendo proyecto:', project);
     setSelectedProject(project);
   };
 
   const closeProject = () => {
     setSelectedProject(null);
+    setEditingProject(null);
+  };
+
+  const deleteProject = async (project) => {
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar "${project.name || 'este proyecto'}"?`)) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API_URL}/api/projects/${project.id}`);
+      alert('✅ Proyecto eliminado exitosamente');
+      // Recargar proyectos
+      await fetchProjects();
+      // Cerrar modal si el proyecto eliminado estaba abierto
+      if (selectedProject?.id === project.id) {
+        closeProject();
+      }
+    } catch (error) {
+      console.error('Error eliminando proyecto:', error);
+      alert('Error al eliminar el proyecto. Por favor intenta nuevamente.');
+    }
+  };
+
+  const startEditing = (project) => {
+    setEditingProject(project.id);
+    setEditForm({
+      name: project.name || '',
+      description: project.description || ''
+    });
+  };
+
+  const saveEdit = async (project) => {
+    try {
+      const response = await axios.put(`${API_URL}/api/projects/${project.id}`, {
+        name: editForm.name,
+        description: editForm.description
+      });
+      
+      if (response.data.success) {
+        alert('✅ Proyecto actualizado exitosamente');
+        await fetchProjects();
+        setEditingProject(null);
+      }
+    } catch (error) {
+      console.error('Error actualizando proyecto:', error);
+      alert('Error al actualizar el proyecto. Por favor intenta nuevamente.');
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingProject(null);
+    setEditForm({ name: '', description: '' });
   };
 
   const downloadProject = (project, fileType = 'all') => {
     if (!project.files) {
-      alert('No files available for download');
+      alert('No hay archivos disponibles para descargar');
       return;
     }
 
     if (fileType === 'all') {
-      // Download all files as a zip would be ideal, but for now we'll download HTML
       downloadSingleFile(project, 'index.html');
     } else {
       downloadSingleFile(project, fileType);
@@ -538,7 +595,7 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
   const downloadSingleFile = (project, fileName) => {
     const fileContent = project.files?.[fileName];
     if (!fileContent) {
-      alert(`File ${fileName} not available`);
+      alert(`El archivo ${fileName} no está disponible`);
       return;
     }
 
@@ -554,9 +611,8 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
   };
 
   const renderProjectPreview = (project) => {
-    // Check if project has files and HTML content
     if (!project.files || !project.files['index.html']) {
-      return '<div style="padding: 20px; text-align: center; color: #666;">Preview not available - No HTML content</div>';
+      return '<div style="padding: 20px; text-align: center; color: #666;">Vista previa no disponible - Sin contenido HTML</div>';
     }
     return project.files['index.html'];
   };
@@ -565,51 +621,78 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
     <section className="projects-section">
       <div className="container">
         <div className="section-header">
-          <h2>Your Generated Websites</h2>
-          <p>Browse and manage your AI-generated projects</p>
+          <h2>Tus Sitios Web Generados</h2>
+          <p>Navega y administra tus proyectos generados con IA</p>
         </div>
 
         {loading ? (
           <div className="loading-state">
             <div className="loading-spinner"></div>
-            <p>Loading your projects...</p>
+            <p>Cargando tus proyectos...</p>
           </div>
         ) : error ? (
           <div className="error-state">
             <div className="error-icon">⚠️</div>
-            <h3>Error Loading Projects</h3>
+            <h3>Error Cargando Proyectos</h3>
             <p>{error}</p>
-            <button onClick={() => window.location.reload()}>Try Again</button>
+            <button onClick={fetchProjects}>Intentar Nuevamente</button>
           </div>
         ) : projects.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📁</div>
-            <h3>No Projects Yet</h3>
-            <p>Generate your first professional website to see it here</p>
+            <h3>Aún No Hay Proyectos</h3>
+            <p>Genera tu primer sitio web profesional para verlo aquí</p>
           </div>
         ) : (
           <div className="projects-grid">
             {projects.map((project, index) => (
-              <div key={project.id || index} className="project-card" onClick={() => openProject(project)}>
-                <div className="project-preview">
+              <div key={project.id || index} className="project-card">
+                <div className="project-preview" onClick={() => openProject(project)}>
                   <iframe 
                     srcDoc={renderProjectPreview(project)}
                     className="project-frame"
-                    title={`Project ${project.name || index + 1}`}
+                    title={`Proyecto ${project.name || index + 1}`}
                   />
                 </div>
                 <div className="project-info">
-                  <h3 className="project-title">{project.name || `Website ${index + 1}`}</h3>
-                  <p className="project-provider">
-                    Generated with {project.metadata?.provider === 'openai' ? '🤖 OpenAI' : project.provider === 'openai' ? '🤖 OpenAI' : '💎 Gemini'}
-                  </p>
-                  <p className="project-type">
-                    Type: {project.metadata?.website_type || project.website_type || 'landing'}
-                  </p>
-                  <div className="project-actions" onClick={e => e.stopPropagation()}>
-                    <button className="action-button" onClick={() => openProject(project)}>View</button>
-                    <button className="action-button" onClick={() => downloadProject(project)}>Download</button>
-                  </div>
+                  {editingProject === project.id ? (
+                    <div className="edit-form">
+                      <input
+                        type="text"
+                        value={editForm.name}
+                        onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                        placeholder="Nombre del proyecto"
+                        className="edit-input"
+                      />
+                      <textarea
+                        value={editForm.description}
+                        onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                        placeholder="Descripción del proyecto"
+                        className="edit-textarea"
+                        rows="2"
+                      />
+                      <div className="edit-actions">
+                        <button className="save-button" onClick={() => saveEdit(project)}>💾 Guardar</button>
+                        <button className="cancel-button" onClick={cancelEdit}>❌ Cancelar</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="project-title">{project.name || `Sitio Web ${index + 1}`}</h3>
+                      <p className="project-provider">
+                        Generado con {project.metadata?.provider === 'openai' ? '🤖 OpenAI' : project.provider === 'openai' ? '🤖 OpenAI' : '💎 Gemini'}
+                      </p>
+                      <p className="project-type">
+                        Tipo: {project.metadata?.website_type || project.website_type || 'landing'}
+                      </p>
+                      <div className="project-actions">
+                        <button className="action-button" onClick={() => openProject(project)}>👁️ Ver</button>
+                        <button className="action-button" onClick={() => startEditing(project)}>✏️ Editar</button>
+                        <button className="action-button" onClick={() => downloadProject(project)}>⬇️ Descargar</button>
+                        <button className="action-button delete-button" onClick={() => deleteProject(project)}>🗑️ Borrar</button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             ))}
@@ -620,26 +703,28 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
           <div className="project-modal" onClick={closeProject}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
               <button className="modal-close" onClick={closeProject}>×</button>
-              <h3>Project Details</h3>
+              <h3>Detalles del Proyecto</h3>
               <div className="project-details">
-                <p><strong>Name:</strong> {selectedProject.name || 'Generated Website'}</p>
-                <p><strong>Provider:</strong> {selectedProject.metadata?.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : selectedProject.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : '💎 Google Gemini'}</p>
-                <p><strong>Type:</strong> {selectedProject.metadata?.website_type || selectedProject.website_type || 'landing'}</p>
-                <p><strong>Generated:</strong> {selectedProject.metadata?.generated_at ? new Date(selectedProject.metadata.generated_at).toLocaleDateString() : selectedProject.created_at ? new Date(selectedProject.created_at).toLocaleDateString() : 'Unknown'}</p>
-                {selectedProject.description && <p><strong>Description:</strong> {selectedProject.description}</p>}
+                <p><strong>Nombre:</strong> {selectedProject.name || 'Sitio Web Generado'}</p>
+                <p><strong>Proveedor:</strong> {selectedProject.metadata?.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : selectedProject.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : '💎 Google Gemini'}</p>
+                <p><strong>Tipo:</strong> {selectedProject.metadata?.website_type || selectedProject.website_type || 'landing'}</p>
+                <p><strong>Generado:</strong> {selectedProject.metadata?.generated_at ? new Date(selectedProject.metadata.generated_at).toLocaleDateString() : selectedProject.created_at ? new Date(selectedProject.created_at).toLocaleDateString() : 'Desconocido'}</p>
+                {selectedProject.description && <p><strong>Descripción:</strong> {selectedProject.description}</p>}
               </div>
               <div className="modal-preview">
                 <iframe 
                   srcDoc={renderProjectPreview(selectedProject)}
                   className="full-preview"
-                  title="Full project preview"
+                  title="Vista previa completa del proyecto"
                 />
               </div>
               <div className="modal-actions">
-                <button className="action-button" onClick={() => downloadSingleFile(selectedProject, 'index.html')}>Download HTML</button>
-                <button className="action-button" onClick={() => downloadSingleFile(selectedProject, 'styles.css')}>Download CSS</button>
-                <button className="action-button" onClick={() => downloadSingleFile(selectedProject, 'script.js')}>Download JS</button>
-                <button className="action-button primary" onClick={() => downloadProject(selectedProject)}>Download All</button>
+                <button className="action-button" onClick={() => downloadSingleFile(selectedProject, 'index.html')}>Descargar HTML</button>
+                <button className="action-button" onClick={() => downloadSingleFile(selectedProject, 'styles.css')}>Descargar CSS</button>
+                <button className="action-button" onClick={() => downloadSingleFile(selectedProject, 'script.js')}>Descargar JS</button>
+                <button className="action-button primary" onClick={() => downloadProject(selectedProject)}>Descargar Todo</button>
+                <button className="action-button edit-button" onClick={() => startEditing(selectedProject)}>✏️ Editar Proyecto</button>
+                <button className="action-button delete-button" onClick={() => deleteProject(selectedProject)}>🗑️ Eliminar Proyecto</button>
               </div>
             </div>
           </div>
@@ -660,28 +745,28 @@ export const Footer = () => {
           <div className="footer-brand">
             <span className="logo-icon">🚀</span>
             <span className="logo-text">WebsiteGen Pro</span>
-            <p>Professional AI-powered website generation</p>
+            <p>Generación profesional de sitios web potenciada por IA</p>
           </div>
           
           <div className="footer-links">
             <div className="link-group">
-              <h4>Product</h4>
-              <a href="#features">Features</a>
-              <a href="#pricing">Pricing</a>
-              <a href="#templates">Templates</a>
+              <h4>Producto</h4>
+              <a href="#features">Características</a>
+              <a href="#pricing">Precios</a>
+              <a href="#templates">Plantillas</a>
             </div>
             
             <div className="link-group">
-              <h4>Support</h4>
-              <a href="#docs">Documentation</a>
-              <a href="#help">Help Center</a>
-              <a href="#contact">Contact</a>
+              <h4>Soporte</h4>
+              <a href="#docs">Documentación</a>
+              <a href="#help">Centro de Ayuda</a>
+              <a href="#contact">Contacto</a>
             </div>
           </div>
         </div>
         
         <div className="footer-bottom">
-          <p>&copy; 2025 WebsiteGen Pro. Powered by AI excellence.</p>
+          <p>&copy; 2025 WebsiteGen Pro. Potenciado por la excelencia de la IA.</p>
         </div>
       </div>
     </footer>

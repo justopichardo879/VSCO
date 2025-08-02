@@ -85,6 +85,19 @@ class DatabaseService:
             logger.error(f"Error getting project {project_id}: {str(e)}")
             return None
 
+    async def update_project(self, project_id: str, update_data: Dict[str, Any]) -> bool:
+        """Update a project"""
+        try:
+            update_data["updated_at"] = datetime.utcnow()
+            result = await self.db.projects.update_one(
+                {"id": project_id}, 
+                {"$set": update_data}
+            )
+            return result.modified_count > 0
+        except Exception as e:
+            logger.error(f"Error updating project {project_id}: {str(e)}")
+            return False
+
     async def list_projects(self, page: int = 1, per_page: int = 20, user_id: Optional[str] = None) -> Dict[str, Any]:
         """List projects with pagination"""
         try:
