@@ -502,9 +502,9 @@ export const ProjectGallery = ({ projects }) => {
                   <p className="project-provider">
                     Generated with {project.provider === 'openai' ? '🤖 OpenAI' : '💎 Gemini'}
                   </p>
-                  <div className="project-actions">
-                    <button className="action-button">View</button>
-                    <button className="action-button">Download</button>
+                  <div className="project-actions" onClick={e => e.stopPropagation()}>
+                    <button className="action-button" onClick={() => openProject(project)}>View</button>
+                    <button className="action-button" onClick={() => downloadProject(project)}>Download</button>
                   </div>
                 </div>
               </div>
