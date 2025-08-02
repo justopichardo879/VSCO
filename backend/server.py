@@ -9,9 +9,9 @@ import uuid
 from datetime import datetime
 from typing import List, Optional
 
-from .ai_service import AIService
-from .database import DatabaseService
-from .models import (
+from ai_service import AIService
+from database import DatabaseService
+from models import (
     WebsiteGenerationRequest, 
     WebsiteResponse, 
     ComparisonResponse, 
