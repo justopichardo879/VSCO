@@ -44,12 +44,17 @@ class DatabaseService:
                 })
             
             # Create project document
+            metadata = project_data.get("metadata", {})
+            # Ensure required fields are present
+            if "website_type" not in metadata:
+                metadata["website_type"] = project_data.get("website_type", "landing")
+            
             project = {
                 "id": project_data.get("session_id", str(datetime.utcnow().timestamp())),
                 "name": f"Generated Website - {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}",
-                "description": project_data.get("metadata", {}).get("prompt", "Generated website"),
+                "description": metadata.get("prompt", "Generated website"),
                 "files": files,
-                "metadata": project_data.get("metadata", {}),
+                "metadata": metadata,
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow(),
                 "user_id": None,
