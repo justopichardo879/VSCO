@@ -611,10 +611,49 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
   };
 
   const renderProjectPreview = (project) => {
-    if (!project.files || !project.files['index.html']) {
-      return '<div style="padding: 20px; text-align: center; color: #666;">Vista previa no disponible - Sin contenido HTML</div>';
+    console.log('Rendering preview for project:', project);
+    
+    // Try multiple ways to find the HTML content
+    let htmlContent = null;
+    
+    // Method 1: Check if files is an array (from database)
+    if (project.files && Array.isArray(project.files)) {
+      const htmlFile = project.files.find(file => 
+        file.filename && file.filename.toLowerCase().includes('html')
+      );
+      if (htmlFile && htmlFile.content) {
+        htmlContent = htmlFile.content;
+      }
     }
-    return project.files['index.html'];
+    
+    // Method 2: Check if files is an object (from direct generation)
+    else if (project.files && typeof project.files === 'object') {
+      // Look for index.html or any .html file
+      htmlContent = project.files['index.html'] || 
+                   project.files['main.html'] || 
+                   Object.values(project.files).find(content => 
+                     typeof content === 'string' && content.includes('<html>')
+                   );
+    }
+    
+    // Method 3: Check top level for HTML content
+    else if (project.html || project.index_html) {
+      htmlContent = project.html || project.index_html;
+    }
+    
+    console.log('Found HTML content:', !!htmlContent);
+    
+    if (!htmlContent) {
+      return `
+        <div style="padding: 20px; text-align: center; color: #666; font-family: Arial, sans-serif;">
+          <h3>Vista previa no disponible</h3>
+          <p>No se encontró contenido HTML en este proyecto</p>
+          <small>Estructura del proyecto: ${JSON.stringify(Object.keys(project), null, 2)}</small>
+        </div>
+      `;
+    }
+    
+    return htmlContent;
   };
 
   return (
