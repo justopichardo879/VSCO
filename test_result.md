@@ -204,15 +204,18 @@ frontend:
         
   - task: "Project Management System"
     implemented: true
-    working: "NA"
+    working: false
     file: "components.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Created project gallery with preview capabilities, download options, and project management features."
+      - working: false
+        agent: "user"
+        comment: "Usuario reporta que el botón 'view project' no hace nada y no presenta el proyecto. No funciona la visualización de proyectos."
 
 metadata:
   created_by: "main_agent"
