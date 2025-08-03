@@ -351,13 +351,37 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
             <div className="preview-viewport">
               <div className="viewport-controls">
                 <div className="device-selector">
-                  <button className="device-btn active">💻 Desktop</button>
-                  <button className="device-btn">📱 Mobile</button>
-                  <button className="device-btn">📱 Tablet</button>
+                  <button 
+                    className={`device-btn ${previewDevice === 'desktop' ? 'active' : ''}`}
+                    onClick={() => handleDeviceChange('desktop')}
+                  >
+                    💻 Desktop
+                  </button>
+                  <button 
+                    className={`device-btn ${previewDevice === 'mobile' ? 'active' : ''}`}
+                    onClick={() => handleDeviceChange('mobile')}
+                  >
+                    📱 Mobile
+                  </button>
+                  <button 
+                    className={`device-btn ${previewDevice === 'tablet' ? 'active' : ''}`}
+                    onClick={() => handleDeviceChange('tablet')}
+                  >
+                    📱 Tablet
+                  </button>
                 </div>
                 <div className="preview-tools">
-                  <button className="tool-btn">🔄 Refresh</button>
-                  <button className="tool-btn">📐 Inspect</button>
+                  <button className="tool-btn" onClick={handleRefresh}>
+                    <span className={previewKey % 2 === 0 ? 'icon' : 'icon rotating'}>🔄</span>
+                    Refresh
+                  </button>
+                  <button 
+                    className={`tool-btn ${inspectMode ? 'active' : ''}`}
+                    onClick={handleInspect}
+                  >
+                    <span className="icon">📐</span>
+                    {inspectMode ? 'Exit Inspect' : 'Inspect'}
+                  </button>
                 </div>
               </div>
               
