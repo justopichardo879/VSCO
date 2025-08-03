@@ -7,7 +7,7 @@ const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 // =====================================
 // ADVANCED VISUAL PROJECTS GALLERY
 // =====================================
-export const VisualProjectsGallery = ({ projects: propProjects = [] }) => {
+export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
