@@ -234,18 +234,112 @@ async def delete_project(project_id: str):
         logger.error(f"Error deleting project {project_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/comparisons/{comparison_id}")
-async def get_comparison(comparison_id: str):
-    """Get a provider comparison result"""
+@api_router.post("/enhance-project")
+async def enhance_project(request: dict):
+    """Enhance a project using AI suggestions"""
     try:
-        comparison = await db_service.get_comparison(comparison_id)
-        if not comparison:
-            raise HTTPException(status_code=404, detail="Comparison not found")
-        return comparison
-    except HTTPException:
-        raise
+        project_id = request.get("project_id")
+        current_content = request.get("current_content")
+        enhancement_type = request.get("enhancement_type", "suggestions")
+        enhancement = request.get("enhancement")
+        apply_enhancement = request.get("apply", False)
+
+        logger.info(f"Enhancing project {project_id} with type: {enhancement_type}")
+
+        if enhancement_type == "suggestions":
+            # Generate enhancement suggestions
+            suggestions = [
+                {
+                    "type": "visual",
+                    "title": "Mejorar Paleta de Colores",
+                    "description": "Actualizar esquema de colores para mayor impacto visual y mejor contraste",
+                    "impact": "high",
+                    "icon": "🎨"
+                },
+                {
+                    "type": "functionality",
+                    "title": "Agregar Animaciones CSS",
+                    "description": "Incluir micro-interacciones y transiciones suaves para mejor UX",
+                    "impact": "medium",
+                    "icon": "✨"
+                },
+                {
+                    "type": "content",
+                    "title": "Optimizar Contenido",
+                    "description": "Mejorar textos, llamadas a la acción y estructura del contenido",
+                    "impact": "high", 
+                    "icon": "📝"
+                },
+                {
+                    "type": "performance",
+                    "title": "Optimización SEO",
+                    "description": "Mejorar meta tags, estructura semántica y rendimiento",
+                    "impact": "medium",
+                    "icon": "🚀"
+                },
+                {
+                    "type": "responsive",
+                    "title": "Mejorar Responsividad",
+                    "description": "Optimizar diseño para dispositivos móviles y tablets",
+                    "impact": "high",
+                    "icon": "📱"
+                }
+            ]
+            
+            return {"success": True, "suggestions": suggestions}
+
+        elif apply_enhancement and enhancement:
+            # Apply the enhancement using AI
+            enhanced_prompt = f"""
+            Mejora este sitio web HTML aplicando la siguiente mejora: {enhancement['title']}
+            
+            Descripción de la mejora: {enhancement['description']}
+            
+            Contenido actual:
+            {current_content[:2000]}...
+            
+            Por favor:
+            1. Mantén la estructura general del sitio
+            2. Aplica específicamente la mejora solicitada
+            3. Asegúrate de que el código sea válido y funcional
+            4. Mantén el estilo profesional y moderno
+            5. Optimiza para rendimiento y accesibilidad
+            
+            Devuelve el HTML, CSS y JS mejorados.
+            """
+
+            # Use AI service to enhance the project
+            result = await ai_service.generate_website(
+                enhanced_prompt,
+                "openai",  # Default to OpenAI for enhancements
+                "enhancement"
+            )
+
+            if result["success"]:
+                # Update the project in database
+                await db_service.update_project(project_id, {
+                    "files": result["files"],
+                    "metadata": {
+                        **result.get("metadata", {}),
+                        "enhanced": True,
+                        "enhancement_applied": enhancement['title'],
+                        "enhanced_at": datetime.utcnow().isoformat()
+                    }
+                })
+
+                return {
+                    "success": True,
+                    "enhanced_project": {
+                        "id": project_id,
+                        "files": result["files"],
+                        "metadata": result.get("metadata", {})
+                    }
+                }
+
+        return {"success": False, "error": "Invalid enhancement request"}
+
     except Exception as e:
-        logger.error(f"Error getting comparison {comparison_id}: {str(e)}")
+        logger.error(f"Error enhancing project: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # ================================
