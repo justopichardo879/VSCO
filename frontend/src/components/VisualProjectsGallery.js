@@ -148,6 +148,8 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
         await fetchProjects();
         // Update live preview
         setLivePreview(response.data.enhanced_project);
+        // Force iframe refresh
+        setPreviewKey(prev => prev + 1);
         alert(`✨ ¡Mejora aplicada exitosamente! ${enhancement.title}`);
       }
     } catch (error) {
@@ -155,6 +157,63 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
       alert('Error aplicando mejora. Funcionalidad en desarrollo.');
     } finally {
       setEnhancing(false);
+    }
+  };
+
+  // Device viewport controls
+  const handleDeviceChange = (device) => {
+    setPreviewDevice(device);
+    if (previewRef.current) {
+      // Apply device-specific styles to iframe container
+      const container = previewRef.current.parentElement;
+      container.className = `preview-frame ${device}`;
+    }
+  };
+
+  // Refresh preview
+  const handleRefresh = () => {
+    setPreviewKey(prev => prev + 1);
+    // Show refresh animation
+    if (previewRef.current) {
+      previewRef.current.style.opacity = '0.5';
+      setTimeout(() => {
+        if (previewRef.current) {
+          previewRef.current.style.opacity = '1';
+        }
+      }, 300);
+    }
+  };
+
+  // Toggle inspect mode
+  const handleInspect = () => {
+    setInspectMode(!inspectMode);
+    if (previewRef.current) {
+      if (!inspectMode) {
+        // Enable inspect mode - add overlay with grid and measurements
+        const inspectOverlay = document.createElement('div');
+        inspectOverlay.className = 'inspect-overlay';
+        inspectOverlay.innerHTML = `
+          <div class="inspect-grid"></div>
+          <div class="inspect-measurements"></div>
+        `;
+        previewRef.current.parentElement.appendChild(inspectOverlay);
+      } else {
+        // Disable inspect mode
+        const overlay = previewRef.current.parentElement.querySelector('.inspect-overlay');
+        if (overlay) overlay.remove();
+      }
+    }
+  };
+
+  // Get device viewport dimensions
+  const getDeviceDimensions = () => {
+    switch (previewDevice) {
+      case 'mobile':
+        return { width: '375px', height: '667px', scale: 0.8 };
+      case 'tablet':
+        return { width: '768px', height: '1024px', scale: 0.7 };
+      default:
+        return { width: '100%', height: '100%', scale: 1 };
     }
   };
 
