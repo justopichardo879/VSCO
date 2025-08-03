@@ -345,14 +345,143 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
     }
   };
 
-  const extractColorScheme = (htmlContent) => {
-    const colors = [];
-    const colorRegex = /#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|rgb\([^)]+\)|rgba\([^)]+\)/g;
-    const matches = htmlContent.match(colorRegex);
-    if (matches) {
-      colors.push(...matches.slice(0, 5));
+  // Apply custom prompt modification
+  const applyCustomModification = async () => {
+    if (!customPrompt.trim() || !livePreview) {
+      showNotification('⚠️ Escribe una instrucción para modificar la página', 'error');
+      return;
     }
-    return colors;
+
+    setPromptModifying(true);
+    
+    try {
+      console.log(`Aplicando modificación personalizada: ${customPrompt}`);
+      
+      const response = await axios.post(`${API_URL}/api/enhance-project`, {
+        project_id: livePreview.id,
+        enhancement: {
+          title: 'Modificación Personalizada',
+          description: customPrompt,
+          type: 'custom',
+          impact: 'high',
+          icon: '✏️',
+          prompt: customPrompt
+        },
+        apply: true,
+        current_content: getProjectHTML(livePreview),
+        modification_type: 'custom_prompt'
+      });
+      
+      if (response.data.success) {
+        // Add to modification history
+        const modification = {
+          id: Date.now(),
+          prompt: customPrompt,
+          timestamp: new Date().toISOString(),
+          applied: true
+        };
+        
+        setModificationHistory(prev => [modification, ...prev.slice(0, 9)]); // Keep last 10
+        
+        // Update projects list
+        await fetchProjects();
+        
+        // Update live preview
+        const enhancedProject = {
+          ...livePreview,
+          files: response.data.enhanced_project.files,
+          metadata: {
+            ...livePreview.metadata,
+            ...response.data.enhanced_project.metadata,
+            last_modification: customPrompt,
+            modified_at: new Date().toISOString()
+          }
+        };
+        
+        setLivePreview(enhancedProject);
+        setPreviewKey(prev => prev + 1);
+        
+        // Clear prompt and show success
+        setCustomPrompt('');
+        showNotification(`✨ ¡Modificación aplicada exitosamente!`, 'success');
+        
+        // Generate new suggestions
+        setTimeout(() => {
+          generateEnhancementSuggestions(enhancedProject);
+        }, 1000);
+        
+      } else {
+        showNotification(`❌ Error: ${response.data.error}`, 'error');
+      }
+    } catch (error) {
+      console.error('Error applying custom modification:', error);
+      showNotification('❌ Error aplicando modificación. Intenta nuevamente.', 'error');
+    } finally {
+      setPromptModifying(false);
+    }
+  };
+
+  // Quick modification suggestions
+  const quickModifications = [
+    {
+      icon: '➕',
+      title: 'Agregar sección de testimonios',
+      prompt: 'Agrega una sección de testimonios con 3 testimonios de clientes satisfechos, con nombres, fotos y reseñas convincentes'
+    },
+    {
+      icon: '📧',
+      title: 'Agregar formulario de contacto',
+      prompt: 'Agrega un formulario de contacto profesional con campos para nombre, email, asunto y mensaje, con validación y estilos modernos'
+    },
+    {
+      icon: '💰',
+      title: 'Agregar sección de precios',
+      prompt: 'Agrega una sección de planes y precios con 3 opciones (básico, premium, enterprise) con características y botones de compra'
+    },
+    {
+      icon: '🎯',
+      title: 'Mejorar call-to-action',
+      prompt: 'Mejora y fortalece todas las llamadas a la acción del sitio, haciéndolas más persuasivas y visibles con mejores textos y diseño'
+    },
+    {
+      icon: '📊',
+      title: 'Agregar estadísticas',
+      prompt: 'Agrega una sección de estadísticas impresionantes con números grandes, iconos y descripciones que demuestren el valor de la empresa'
+    },
+    {
+      icon: '🌟',
+      title: 'Agregar sección de características',
+      prompt: 'Agrega una sección que destaque las principales características o beneficios con iconos, títulos y descripciones atractivas'
+    }
+  ];
+
+  // Apply quick modification
+  const applyQuickModification = (modification) => {
+    setCustomPrompt(modification.prompt);
+    setShowPromptSuggestions(false);
+  };
+
+  // Get modification history for display
+  const getModificationHistoryDisplay = () => {
+    return modificationHistory.slice(0, 5).map(mod => ({
+      ...mod,
+      shortPrompt: mod.prompt.length > 60 ? mod.prompt.substring(0, 60) + '...' : mod.prompt,
+      timeAgo: getTimeAgo(mod.timestamp)
+    }));
+  };
+
+  const getTimeAgo = (timestamp) => {
+    const now = new Date();
+    const then = new Date(timestamp);
+    const diffMs = now - then;
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 1) return 'Hace un momento';
+    if (diffMins < 60) return `Hace ${diffMins}m`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `Hace ${diffHours}h`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `Hace ${diffDays}d`;
   };
 
   // Project Summary Component
