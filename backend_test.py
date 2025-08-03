@@ -323,6 +323,178 @@ class BackendTester:
         except Exception as e:
             self.log_test("Project Retrieval", False, error=str(e))
 
+    def test_project_deletion_functionality(self):
+        """Test project deletion functionality comprehensively"""
+        print("🗑️  TESTING PROJECT DELETION FUNCTIONALITY")
+        print("-" * 50)
+        
+        # First, get current projects list
+        initial_projects = self.get_projects_for_testing()
+        initial_count = len(initial_projects)
+        
+        if initial_count == 0:
+            # Create a test project first
+            test_project = self.create_test_project_for_deletion()
+            if not test_project:
+                self.log_test("Project Deletion Setup", False, 
+                            error="Could not create test project for deletion testing")
+                return
+            
+            # Refresh projects list
+            initial_projects = self.get_projects_for_testing()
+            initial_count = len(initial_projects)
+        
+        if initial_count == 0:
+            self.log_test("Project Deletion - No Projects", False, 
+                        error="No projects available for deletion testing")
+            return
+        
+        # Test 1: Delete existing project
+        self.test_delete_existing_project(initial_projects[0])
+        
+        # Test 2: Verify deletion in database (check projects list)
+        self.test_verify_deletion_in_database(initial_projects[0]["id"], initial_count)
+        
+        # Test 3: Test deletion of non-existent project (404 error)
+        self.test_delete_nonexistent_project()
+        
+        # Test 4: Test GET /api/projects after deletion
+        self.test_projects_list_after_deletion(initial_count - 1)
+
+    def get_projects_for_testing(self):
+        """Get projects list for testing purposes"""
+        try:
+            response = requests.get(f"{self.api_url}/projects", timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                return data.get("projects", [])
+        except Exception:
+            pass
+        return []
+
+    def create_test_project_for_deletion(self):
+        """Create a test project specifically for deletion testing"""
+        try:
+            payload = {
+                "prompt": "Create a simple test website for deletion testing purposes",
+                "website_type": "landing",
+                "provider": "openai"
+            }
+            
+            response = requests.post(f"{self.api_url}/generate-website", 
+                                   json=payload, timeout=60)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success"):
+                    return data
+        except Exception as e:
+            print(f"Error creating test project: {e}")
+        
+        return None
+
+    def test_delete_existing_project(self, project):
+        """Test DELETE /api/projects/{project_id} endpoint"""
+        try:
+            project_id = project.get("id")
+            project_name = project.get("name", "Unknown")
+            
+            response = requests.delete(f"{self.api_url}/projects/{project_id}", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if data.get("success") and "deleted successfully" in data.get("message", ""):
+                    details = f"Successfully deleted project '{project_name}' (ID: {project_id[:8]}...)"
+                    self.log_test("DELETE Project Endpoint", True, details)
+                    return True
+                else:
+                    self.log_test("DELETE Project Endpoint", False, 
+                                error=f"Invalid response format: {data}")
+            else:
+                self.log_test("DELETE Project Endpoint", False, 
+                            error=f"HTTP {response.status_code}: {response.text}")
+                
+        except Exception as e:
+            self.log_test("DELETE Project Endpoint", False, error=str(e))
+        
+        return False
+
+    def test_verify_deletion_in_database(self, deleted_project_id, initial_count):
+        """Verify that project was actually deleted from database"""
+        try:
+            # Check projects list
+            current_projects = self.get_projects_for_testing()
+            current_count = len(current_projects)
+            
+            # Verify count decreased
+            if current_count == initial_count - 1:
+                # Verify specific project is not in list
+                project_ids = [p.get("id") for p in current_projects]
+                
+                if deleted_project_id not in project_ids:
+                    details = f"Project count decreased from {initial_count} to {current_count}, deleted project not in list"
+                    self.log_test("Database Deletion Verification", True, details)
+                else:
+                    self.log_test("Database Deletion Verification", False, 
+                                error="Deleted project still appears in projects list")
+            else:
+                self.log_test("Database Deletion Verification", False, 
+                            error=f"Project count unchanged: {initial_count} -> {current_count}")
+                
+        except Exception as e:
+            self.log_test("Database Deletion Verification", False, error=str(e))
+
+    def test_delete_nonexistent_project(self):
+        """Test deletion of non-existent project (should return 404)"""
+        try:
+            fake_project_id = "nonexistent-project-id-12345"
+            
+            response = requests.delete(f"{self.api_url}/projects/{fake_project_id}", timeout=10)
+            
+            if response.status_code == 404:
+                data = response.json()
+                if "not found" in data.get("detail", "").lower():
+                    details = f"Correctly returned 404 for non-existent project ID"
+                    self.log_test("Delete Non-existent Project (404)", True, details)
+                else:
+                    self.log_test("Delete Non-existent Project (404)", False, 
+                                error="404 returned but wrong error message")
+            else:
+                self.log_test("Delete Non-existent Project (404)", False, 
+                            error=f"Expected 404, got HTTP {response.status_code}: {response.text}")
+                
+        except Exception as e:
+            self.log_test("Delete Non-existent Project (404)", False, error=str(e))
+
+    def test_projects_list_after_deletion(self, expected_count):
+        """Test GET /api/projects after deletion to confirm list updates"""
+        try:
+            response = requests.get(f"{self.api_url}/projects", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if "projects" in data and "total" in data:
+                    actual_count = data.get("total", 0)
+                    projects_shown = len(data.get("projects", []))
+                    
+                    if actual_count == expected_count:
+                        details = f"Projects list correctly updated: {actual_count} total, showing {projects_shown}"
+                        self.log_test("Projects List After Deletion", True, details)
+                    else:
+                        self.log_test("Projects List After Deletion", False, 
+                                    error=f"Expected {expected_count} projects, found {actual_count}")
+                else:
+                    self.log_test("Projects List After Deletion", False, 
+                                error="Invalid response format")
+            else:
+                self.log_test("Projects List After Deletion", False, 
+                            error=f"HTTP {response.status_code}: {response.text}")
+                
+        except Exception as e:
+            self.log_test("Projects List After Deletion", False, error=str(e))
+
     def test_database_connectivity(self):
         """Test database connectivity through API"""
         try:
