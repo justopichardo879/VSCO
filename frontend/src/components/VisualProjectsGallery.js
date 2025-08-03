@@ -138,26 +138,215 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
   const applyEnhancement = async (project, enhancement) => {
     setEnhancing(true);
     try {
+      console.log(`Aplicando mejora: ${enhancement.title}`);
+      
       const response = await axios.post(`${API_URL}/api/enhance-project`, {
         project_id: project.id,
         enhancement: enhancement,
-        apply: true
+        apply: true,
+        current_content: getProjectHTML(project)
       });
       
       if (response.data.success) {
+        // Update projects list
         await fetchProjects();
-        // Update live preview
-        setLivePreview(response.data.enhanced_project);
-        // Force iframe refresh
+        
+        // Find and update the enhanced project
+        const enhancedProject = {
+          ...project,
+          files: response.data.enhanced_project.files,
+          metadata: {
+            ...project.metadata,
+            ...response.data.enhanced_project.metadata,
+            enhanced: true,
+            last_enhancement: enhancement.title,
+            enhanced_at: new Date().toISOString()
+          }
+        };
+        
+        // Update live preview with enhanced version
+        setLivePreview(enhancedProject);
+        
+        // Force iframe refresh to show changes
         setPreviewKey(prev => prev + 1);
-        alert(`✨ ¡Mejora aplicada exitosamente! ${enhancement.title}`);
+        
+        // Show success notification
+        showNotification(`✨ ¡${enhancement.title} aplicada exitosamente!`, 'success');
+        
+        // Generate new suggestions based on enhanced content
+        setTimeout(() => {
+          generateEnhancementSuggestions(enhancedProject);
+        }, 1000);
+        
+      } else {
+        showNotification(`❌ Error aplicando mejora: ${response.data.error}`, 'error');
       }
     } catch (error) {
       console.error('Error applying enhancement:', error);
-      alert('Error aplicando mejora. Funcionalidad en desarrollo.');
+      showNotification('❌ Error aplicando mejora. Intenta nuevamente.', 'error');
     } finally {
       setEnhancing(false);
     }
+  };
+
+  // Apply manual enhancements
+  const applyManualEnhancement = async (project, enhancementType) => {
+    setEnhancing(true);
+    
+    const enhancements = {
+      colors: {
+        title: 'Cambiar Paleta de Colores',
+        prompt: 'Actualiza la paleta de colores del sitio web con una combinación moderna y atractiva. Usa colores que generen confianza y profesionalismo. Mantén la estructura pero mejora todos los colores de fondo, texto, botones y elementos decorativos.',
+        icon: '🎨'
+      },
+      text: {
+        title: 'Mejorar Textos y Contenido', 
+        prompt: 'Mejora todos los textos del sitio web haciéndolos más persuasivos, claros y profesionales. Optimiza títulos, descripciones, llamadas a la acción y contenido general. Mantén la estructura pero mejora la redacción.',
+        icon: '📝'
+      },
+      images: {
+        title: 'Optimizar Imágenes y Visual',
+        prompt: 'Mejora la presentación visual del sitio web. Optimiza el uso de imágenes, iconos y elementos visuales. Agrega placeholders para imágenes si faltan y mejora el diseño visual general.',
+        icon: '🖼️'
+      },
+      config: {
+        title: 'Configuración Avanzada',
+        prompt: 'Optimiza la configuración técnica del sitio web: meta tags, SEO, performance, accesibilidad y estructura semántica. Agrega elementos técnicos que mejoren la funcionalidad.',
+        icon: '⚙️'
+      }
+    };
+
+    try {
+      const enhancement = enhancements[enhancementType];
+      if (!enhancement) return;
+
+      console.log(`Aplicando mejora manual: ${enhancement.title}`);
+      
+      const response = await axios.post(`${API_URL}/api/enhance-project`, {
+        project_id: project.id,
+        enhancement: {
+          ...enhancement,
+          type: enhancementType,
+          impact: 'high'
+        },
+        apply: true,
+        current_content: getProjectHTML(project)
+      });
+      
+      if (response.data.success) {
+        // Same update logic as automatic enhancements
+        await fetchProjects();
+        
+        const enhancedProject = {
+          ...project,
+          files: response.data.enhanced_project.files,
+          metadata: {
+            ...project.metadata,
+            enhanced: true,
+            last_enhancement: enhancement.title,
+            enhanced_at: new Date().toISOString()
+          }
+        };
+        
+        setLivePreview(enhancedProject);
+        setPreviewKey(prev => prev + 1);
+        showNotification(`✨ ¡${enhancement.title} aplicada exitosamente!`, 'success');
+        
+        setTimeout(() => {
+          generateEnhancementSuggestions(enhancedProject);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error applying manual enhancement:', error);
+      showNotification('❌ Error aplicando mejora manual.', 'error');
+    } finally {
+      setEnhancing(false);
+    }
+  };
+
+  // Show notification system
+  const showNotification = (message, type) => {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    // Style the notification
+    Object.assign(notification.style, {
+      position: 'fixed',
+      top: '20px',
+      right: '20px',
+      background: type === 'success' ? '#10b981' : '#ef4444',
+      color: 'white',
+      padding: '12px 20px',
+      borderRadius: '8px',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+      zIndex: '10000',
+      animation: 'slideInRight 0.3s ease',
+      fontSize: '14px',
+      fontWeight: '500'
+    });
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease';
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 3000);
+  };
+
+  // Generate project summary
+  const generateProjectSummary = async (project) => {
+    try {
+      const htmlContent = getProjectHTML(project);
+      if (!htmlContent) return null;
+
+      // Extract key information from HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlContent;
+      
+      const title = tempDiv.querySelector('title')?.textContent || 
+                    tempDiv.querySelector('h1')?.textContent || 
+                    'Sitio Web Sin Título';
+      
+      const headings = Array.from(tempDiv.querySelectorAll('h1, h2, h3')).map(h => h.textContent);
+      const paragraphs = Array.from(tempDiv.querySelectorAll('p')).slice(0, 3).map(p => p.textContent);
+      const links = Array.from(tempDiv.querySelectorAll('a')).length;
+      const images = Array.from(tempDiv.querySelectorAll('img')).length;
+      const buttons = Array.from(tempDiv.querySelectorAll('button, .btn, [role="button"]')).length;
+
+      return {
+        title,
+        headings: headings.slice(0, 5),
+        keyContent: paragraphs.slice(0, 2),
+        elementsCount: {
+          links,
+          images,
+          buttons,
+          sections: tempDiv.querySelectorAll('section, .section').length
+        },
+        hasNavigation: !!tempDiv.querySelector('nav'),
+        hasFooter: !!tempDiv.querySelector('footer'),
+        colorScheme: extractColorScheme(htmlContent),
+        estimatedWords: tempDiv.textContent.split(' ').length
+      };
+    } catch (error) {
+      console.error('Error generating summary:', error);
+      return null;
+    }
+  };
+
+  const extractColorScheme = (htmlContent) => {
+    const colors = [];
+    const colorRegex = /#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|rgb\([^)]+\)|rgba\([^)]+\)/g;
+    const matches = htmlContent.match(colorRegex);
+    if (matches) {
+      colors.push(...matches.slice(0, 5));
+    }
+    return colors;
   };
 
   // Device viewport controls
