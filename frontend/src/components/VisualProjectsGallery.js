@@ -385,13 +385,35 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
                 </div>
               </div>
               
-              <div className="preview-frame">
-                <iframe 
-                  ref={previewRef}
-                  src={`data:text/html,${encodeURIComponent(getProjectHTML(livePreview) || '<div>Loading...</div>')}`}
-                  className="preview-iframe"
-                  title="Live Preview"
-                />
+              <div className={`preview-frame ${previewDevice}`} style={getDeviceDimensions()}>
+                <div className="device-frame">
+                  <iframe 
+                    key={previewKey}
+                    ref={previewRef}
+                    src={`data:text/html,${encodeURIComponent(getProjectHTML(livePreview) || '<div>Loading...</div>')}`}
+                    className="preview-iframe"
+                    title="Live Preview"
+                    style={{
+                      width: getDeviceDimensions().width,
+                      height: getDeviceDimensions().height,
+                      transform: `scale(${getDeviceDimensions().scale})`,
+                      transformOrigin: 'center top'
+                    }}
+                  />
+                  {previewDevice !== 'desktop' && (
+                    <div className="device-chrome">
+                      {previewDevice === 'mobile' && (
+                        <>
+                          <div className="mobile-notch"></div>
+                          <div className="mobile-home-indicator"></div>
+                        </>
+                      )}
+                      {previewDevice === 'tablet' && (
+                        <div className="tablet-home-button"></div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
