@@ -18,6 +18,12 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('created_at');
   const [enhancementSuggestions, setEnhancementSuggestions] = useState([]);
+  
+  // Preview controls state
+  const [previewDevice, setPreviewDevice] = useState('desktop');
+  const [previewKey, setPreviewKey] = useState(0);
+  const [inspectMode, setInspectMode] = useState(false);
+  
   const previewRef = useRef(null);
 
   useEffect(() => {
