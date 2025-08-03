@@ -247,66 +247,13 @@ async def enhance_project(request: dict):
         logger.info(f"Enhancing project {project_id} with type: {enhancement_type}")
 
         if enhancement_type == "suggestions":
-            # Generate enhancement suggestions
-            suggestions = [
-                {
-                    "type": "visual",
-                    "title": "Mejorar Paleta de Colores",
-                    "description": "Actualizar esquema de colores para mayor impacto visual y mejor contraste",
-                    "impact": "high",
-                    "icon": "🎨"
-                },
-                {
-                    "type": "functionality",
-                    "title": "Agregar Animaciones CSS",
-                    "description": "Incluir micro-interacciones y transiciones suaves para mejor UX",
-                    "impact": "medium",
-                    "icon": "✨"
-                },
-                {
-                    "type": "content",
-                    "title": "Optimizar Contenido",
-                    "description": "Mejorar textos, llamadas a la acción y estructura del contenido",
-                    "impact": "high", 
-                    "icon": "📝"
-                },
-                {
-                    "type": "performance",
-                    "title": "Optimización SEO",
-                    "description": "Mejorar meta tags, estructura semántica y rendimiento",
-                    "impact": "medium",
-                    "icon": "🚀"
-                },
-                {
-                    "type": "responsive",
-                    "title": "Mejorar Responsividad",
-                    "description": "Optimizar diseño para dispositivos móviles y tablets",
-                    "impact": "high",
-                    "icon": "📱"
-                }
-            ]
-            
+            # Generate smart enhancement suggestions based on content analysis
+            suggestions = await generate_smart_suggestions(current_content)
             return {"success": True, "suggestions": suggestions}
 
         elif apply_enhancement and enhancement:
             # Apply the enhancement using AI
-            enhanced_prompt = f"""
-            Mejora este sitio web HTML aplicando la siguiente mejora: {enhancement['title']}
-            
-            Descripción de la mejora: {enhancement['description']}
-            
-            Contenido actual:
-            {current_content[:2000]}...
-            
-            Por favor:
-            1. Mantén la estructura general del sitio
-            2. Aplica específicamente la mejora solicitada
-            3. Asegúrate de que el código sea válido y funcional
-            4. Mantén el estilo profesional y moderno
-            5. Optimiza para rendimiento y accesibilidad
-            
-            Devuelve el HTML, CSS y JS mejorados.
-            """
+            enhanced_prompt = create_enhancement_prompt(enhancement, current_content)
 
             # Use AI service to enhance the project
             result = await ai_service.generate_website(
@@ -341,6 +288,197 @@ async def enhance_project(request: dict):
     except Exception as e:
         logger.error(f"Error enhancing project: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+async def generate_smart_suggestions(content: str):
+    """Generate intelligent enhancement suggestions based on content analysis"""
+    suggestions = []
+    
+    # Analyze the content to provide contextual suggestions
+    has_forms = 'form' in content.lower() or 'input' in content.lower()
+    has_images = 'img' in content.lower() or 'image' in content.lower()
+    has_navigation = 'nav' in content.lower() or 'menu' in content.lower()
+    has_footer = 'footer' in content.lower()
+    has_animations = 'animation' in content.lower() or 'transition' in content.lower()
+    
+    # Color enhancement
+    suggestions.append({
+        "type": "visual",
+        "title": "Mejorar Paleta de Colores",
+        "description": "Aplicar una paleta de colores moderna y profesional que mejore la legibilidad y el impacto visual",
+        "impact": "high",
+        "icon": "🎨"
+    })
+    
+    # Animation enhancement
+    if not has_animations:
+        suggestions.append({
+            "type": "functionality",
+            "title": "Agregar Animaciones CSS",
+            "description": "Incluir micro-interacciones y transiciones suaves para mejorar la experiencia de usuario",
+            "impact": "medium",
+            "icon": "✨"
+        })
+    
+    # Content optimization
+    suggestions.append({
+        "type": "content",
+        "title": "Optimizar Contenido",
+        "description": "Mejorar textos, llamadas a la acción y estructura del contenido para mayor conversión",
+        "impact": "high",
+        "icon": "📝"
+    })
+    
+    # SEO optimization
+    suggestions.append({
+        "type": "performance",
+        "title": "Optimización SEO",
+        "description": "Mejorar meta tags, estructura semántica y rendimiento para mejor posicionamiento",
+        "impact": "medium",
+        "icon": "🚀"
+    })
+    
+    # Responsive improvements
+    suggestions.append({
+        "type": "responsive",
+        "title": "Mejorar Responsividad",
+        "description": "Optimizar el diseño para dispositivos móviles y tablets con mejores breakpoints",
+        "impact": "high",
+        "icon": "📱"
+    })
+    
+    # Interactive elements
+    if not has_forms:
+        suggestions.append({
+            "type": "functionality",
+            "title": "Agregar Elementos Interactivos",
+            "description": "Incluir formularios de contacto, botones de acción y elementos interactivos",
+            "impact": "medium",
+            "icon": "🔘"
+        })
+    
+    return suggestions
+
+def create_enhancement_prompt(enhancement: dict, current_content: str):
+    """Create a detailed prompt for AI enhancement"""
+    
+    base_prompt = f"""
+MEJORA ESPECÍFICA: {enhancement['title']}
+DESCRIPCIÓN: {enhancement['description']}
+
+CONTENIDO ACTUAL A MEJORAR:
+{current_content[:3000]}
+
+INSTRUCCIONES DETALLADAS:
+"""
+    
+    enhancement_type = enhancement.get('type', 'general')
+    
+    if enhancement_type == 'visual' or 'color' in enhancement.get('title', '').lower():
+        base_prompt += """
+1. PALETA DE COLORES:
+   - Utiliza una paleta moderna y profesional
+   - Aplica principios de teoría del color
+   - Asegura contraste adecuado para accesibilidad (WCAG 2.1)
+   - Usa colores que transmitan confianza y profesionalismo
+   - Implementa gradientes sutiles donde sea apropiado
+
+2. ELEMENTOS VISUALES:
+   - Actualiza todos los colores de fondo, texto y botones
+   - Mejora los colores de hover y estados activos
+   - Utiliza colores semánticos para elementos importantes
+   - Mantén consistencia en toda la página
+"""
+    
+    elif 'text' in enhancement.get('title', '').lower() or enhancement_type == 'content':
+        base_prompt += """
+1. OPTIMIZACIÓN DE CONTENIDO:
+   - Mejora títulos para mayor impacto y SEO
+   - Optimiza descripciones para ser más persuasivas
+   - Crea llamadas a la acción más efectivas
+   - Mejora la jerarquía de información
+   - Usa lenguaje claro y orientado a conversión
+
+2. ESTRUCTURA TEXTUAL:
+   - Mejora la legibilidad con espaciado adecuado
+   - Utiliza bullet points donde sea apropiado
+   - Optimiza la longitud de párrafos
+   - Agrega elementos de confianza y credibilidad
+"""
+    
+    elif 'animation' in enhancement.get('title', '').lower() or enhancement_type == 'functionality':
+        base_prompt += """
+1. ANIMACIONES Y TRANSICIONES:
+   - Agrega transiciones suaves en hover states
+   - Implementa animaciones de entrada para elementos
+   - Usa transform y opacity para mejor performance
+   - Incluye micro-interacciones en botones
+   - Implementa loading states y feedback visual
+
+2. INTERACTIVIDAD:
+   - Mejora la respuesta visual de elementos clickeables
+   - Agrega efectos de focus para accesibilidad
+   - Implementa estados de carga y éxito
+   - Usa animaciones CSS3 modernas
+"""
+    
+    elif enhancement_type == 'performance' or 'seo' in enhancement.get('title', '').lower():
+        base_prompt += """
+1. OPTIMIZACIÓN SEO:
+   - Mejora meta tags (title, description, keywords)
+   - Implementa estructura semántica correcta (h1, h2, etc.)
+   - Agrega alt tags para imágenes
+   - Incluye Open Graph y Twitter Card meta tags
+   - Optimiza la velocidad de carga
+
+2. PERFORMANCE:
+   - Minifica CSS y optimiza código
+   - Implementa lazy loading donde sea apropiado
+   - Optimiza imágenes y recursos
+   - Mejora la estructura del código
+"""
+    
+    elif enhancement_type == 'responsive' or 'mobile' in enhancement.get('title', '').lower():
+        base_prompt += """
+1. DISEÑO RESPONSIVO:
+   - Implementa breakpoints modernos y efectivos
+   - Optimiza para móviles first
+   - Mejora la navegación táctil
+   - Ajusta tipografía para diferentes pantallas
+   - Optimiza imágenes para retina displays
+
+2. EXPERIENCIA MÓVIL:
+   - Mejora el espaciado para touch targets
+   - Optimiza formularios para móviles
+   - Implementa navegación mobile-friendly
+   - Ajusta el layout para pantallas pequeñas
+"""
+    
+    base_prompt += """
+
+REQUISITOS TÉCNICOS:
+- Mantén la estructura general del HTML
+- Conserva la funcionalidad existente
+- Asegura compatibilidad cross-browser
+- Usa CSS moderno pero compatible
+- Optimiza para performance y accesibilidad
+- Genera código limpio y bien comentado
+
+FORMATO DE RESPUESTA:
+=== FILE: index.html ===
+[HTML completo mejorado]
+
+=== FILE: styles.css ===
+[CSS completo con mejoras aplicadas]
+
+=== FILE: script.js ===
+[JavaScript con funcionalidades mejoradas]
+
+=== END FILES ===
+
+Importante: La mejora debe ser sustancial y claramente visible, manteniendo la calidad profesional del sitio.
+"""
+    
+    return base_prompt
 
 # ================================
 # TEMPLATE SYSTEM ENDPOINTS
