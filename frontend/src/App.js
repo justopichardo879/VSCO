@@ -6,9 +6,9 @@ import {
   WebsiteGenerator,
   FeatureGrid,
   ProviderComparison,
-  ProjectGallery,
   Footer
 } from './components';
+import { VisualProjectsGallery } from './components/VisualProjectsGallery';
 
 function App() {
   const [activeView, setActiveView] = useState('generator');
@@ -20,7 +20,9 @@ function App() {
 
   return (
     <div className="app-container">
-      <Header activeView={activeView} onViewChange={setActiveView} />
+      {activeView !== 'projects' && (
+        <Header activeView={activeView} onViewChange={setActiveView} />
+      )}
       
       <main className="main-content">
         {activeView === 'generator' && (
@@ -36,7 +38,10 @@ function App() {
         )}
         
         {activeView === 'projects' && (
-          <ProjectGallery projects={generatedProjects} />
+          <VisualProjectsGallery 
+            projects={generatedProjects} 
+            onBack={() => setActiveView('generator')}
+          />
         )}
         
         {activeView === 'about' && (
@@ -63,7 +68,7 @@ function App() {
         )}
       </main>
       
-      <Footer />
+      {activeView !== 'projects' && <Footer />}
     </div>
   );
 }
