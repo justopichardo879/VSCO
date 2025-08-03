@@ -362,11 +362,17 @@ Esta acción NO se puede deshacer.`;
     notification.textContent = message;
     
     // Style the notification
+    const notificationColors = {
+      'success': '#10b981',
+      'error': '#ef4444',
+      'info': '#3b82f6'
+    };
+    
     Object.assign(notification.style, {
       position: 'fixed',
       top: '20px',
       right: '20px',
-      background: type === 'success' ? '#10b981' : '#ef4444',
+      background: notificationColors[type] || '#6b7280',
       color: 'white',
       padding: '12px 20px',
       borderRadius: '8px',
@@ -379,13 +385,16 @@ Esta acción NO se puede deshacer.`;
     
     document.body.appendChild(notification);
     
-    // Remove after 3 seconds
+    // Remove after 3 seconds (or 5 seconds for info)
+    const timeout = type === 'info' ? 5000 : 3000;
     setTimeout(() => {
       notification.style.animation = 'slideOutRight 0.3s ease';
       setTimeout(() => {
-        document.body.removeChild(notification);
+        if (notification.parentNode) {
+          document.body.removeChild(notification);
+        }
       }, 300);
-    }, 3000);
+    }, timeout);
   };
 
   // Generate project summary
