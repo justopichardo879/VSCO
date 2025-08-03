@@ -241,10 +241,11 @@ async def enhance_project(request: dict):
         project_id = request.get("project_id")
         current_content = request.get("current_content")
         enhancement_type = request.get("enhancement_type", "suggestions")
+        modification_type = request.get("modification_type")
         enhancement = request.get("enhancement")
         apply_enhancement = request.get("apply", False)
 
-        logger.info(f"Enhancing project {project_id} with type: {enhancement_type}")
+        logger.info(f"Enhancing project {project_id} with type: {enhancement_type}, modification: {modification_type}")
 
         if enhancement_type == "suggestions":
             # Generate smart enhancement suggestions based on content analysis
@@ -252,8 +253,11 @@ async def enhance_project(request: dict):
             return {"success": True, "suggestions": suggestions}
 
         elif apply_enhancement and enhancement:
-            # Apply the enhancement using AI
-            enhanced_prompt = create_enhancement_prompt(enhancement, current_content)
+            # Handle custom prompt modifications
+            if modification_type == "custom_prompt":
+                enhanced_prompt = create_custom_modification_prompt(enhancement, current_content)
+            else:
+                enhanced_prompt = create_enhancement_prompt(enhancement, current_content)
 
             # Use AI service to enhance the project
             result = await ai_service.generate_website(
