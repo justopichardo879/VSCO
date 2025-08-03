@@ -1195,7 +1195,9 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
                 </div>
               </div>
             )}
-          </div>
+            
+            {/* Manual Enhancement and Project Summary sections remain the same */}
+            <div className="manual-enhancement">
 
             {/* Custom Prompt Modification */}
             <div className="custom-modification">
