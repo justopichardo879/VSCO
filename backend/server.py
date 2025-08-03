@@ -543,6 +543,63 @@ IMPORTANTE: La modificación debe ser sustancial, visible y profesional. Si el u
     
     return custom_prompt
 
+def create_chat_modification_prompt(enhancement: dict, current_content: str):
+    """Create a chat-style interactive modification prompt"""
+    
+    user_message = enhancement.get('message') or enhancement.get('description', '')
+    
+    chat_prompt = f"""
+CONVERSACIÓN INTERACTIVA CON EL USUARIO:
+Usuario: "{user_message}"
+
+CONTENIDO ACTUAL DEL SITIO WEB:
+{current_content[:4000]}
+
+INSTRUCCIONES PARA RESPUESTA CONVERSACIONAL:
+1. COMPRENSIÓN: Interpreta la solicitud del usuario como si fuera una conversación natural
+2. IMPLEMENTACIÓN: Aplica los cambios solicitados de manera intuitiva y profesional
+3. MEJORAS ADICIONALES: Si es apropiado, sugiere mejoras relacionadas que beneficien al sitio
+4. COMUNICACIÓN: Responde de manera amigable y profesional
+
+TIPOS DE SOLICITUDES CONVERSACIONALES:
+- "Hazlo más moderno" → Aplicar diseño contemporáneo
+- "Agrega más color" → Mejorar paleta de colores
+- "Necesito un formulario de contacto" → Agregar formulario funcional
+- "Mejora la navegación" → Optimizar menú y estructura
+- "Hazlo más profesional" → Aplicar estilo corporativo
+
+PAUTAS DE RESPUESTA CONVERSACIONAL:
+✓ Interpreta la intención detrás de las palabras del usuario
+✓ Aplica las mejores prácticas de diseño web
+✓ Mantén la funcionalidad existente
+✓ Mejora la experiencia de usuario
+✓ Usa tecnologías web modernas (HTML5, CSS3, JavaScript ES6+)
+✓ Asegura responsividad y accesibilidad
+✓ Optimiza para performance
+
+ESTILO DE IMPLEMENTACIÓN:
+- Si el usuario pide algo "más moderno": usa gradientes, sombras sutiles, tipografía moderna
+- Si pide "más profesional": usa colores corporativos, espaciado generoso, tipografía limpia
+- Si pide "más colorido": introduce una paleta vibrante pero equilibrada
+- Si pide funcionalidad: implementa con las mejores prácticas UX/UI
+
+FORMATO DE RESPUESTA OBLIGATORIO:
+=== FILE: index.html ===
+[HTML completo con las modificaciones conversacionales aplicadas]
+
+=== FILE: styles.css ===
+[CSS completo con estilos mejorados según la conversación]
+
+=== FILE: script.js ===
+[JavaScript con funcionalidades nuevas o mejoradas si es necesario]
+
+=== END FILES ===
+
+IMPORTANTE: Responde a la intención del usuario, no solo a las palabras literales. Aplica tu conocimiento de diseño web para crear la mejor experiencia posible.
+"""
+    
+    return chat_prompt
+
 # ================================
 # TEMPLATE SYSTEM ENDPOINTS
 # ================================
