@@ -77,7 +77,27 @@ Always generate complete, production-ready code that looks professional and mode
             chat = await self.create_chat_instance(provider, session_id)
             
             user_message = UserMessage(text=enhanced_prompt)
-            response = await chat.send_message(user_message)
+            
+            # Add timeout to prevent hanging
+            try:
+                response = await asyncio.wait_for(
+                    chat.send_message(user_message),
+                    timeout=120  # 2 minutes timeout
+                )
+            except asyncio.TimeoutError:
+                logger.error(f"Timeout waiting for {provider} response after 120 seconds")
+                return {
+                    "success": False,
+                    "error": f"Timeout: {provider} took too long to respond. Please try again.",
+                    "provider": provider
+                }
+            except Exception as api_error:
+                logger.error(f"API error from {provider}: {str(api_error)}")
+                return {
+                    "success": False,
+                    "error": f"API Error: {str(api_error)}",
+                    "provider": provider
+                }
             
             # Parse the response and extract code
             parsed_result = self._parse_ai_response(response, provider)
