@@ -619,19 +619,22 @@
   display: flex;
   flex: 1;
   overflow: hidden;
+  height: calc(100vh - 80px);
 }
 
 .preview-main {
-  flex: 2;
+  flex: 1;
   display: flex;
   flex-direction: column;
   background: #1a1a1a;
+  min-width: 0;
 }
 
 .preview-viewport {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .viewport-controls {
@@ -745,12 +748,39 @@
 
 .preview-frame {
   flex: 1;
-  padding: 2rem;
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #000;
+  overflow: hidden;
+}
+
+.preview-frame.desktop .device-frame {
+  width: 100%;
+  height: 100%;
+}
+
+.preview-frame.desktop .preview-iframe {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none !important;
+}
+
+.preview-frame.mobile .device-frame {
+  width: 375px;
+  height: 667px;
+  position: relative;
+}
+
+.preview-frame.tablet .device-frame {
+  width: 768px;
+  height: 1024px;
+  position: relative;
 }
 
 .preview-frame.mobile {
