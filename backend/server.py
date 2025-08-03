@@ -91,11 +91,22 @@ async def generate_website(request: WebsiteGenerationRequest):
             return WebsiteResponse(**result)
             
         else:
-            # Comparison mode - generate with both providers
-            comparison_result = await ai_service.compare_providers(
-                request.prompt,
-                request.website_type
-            )
+            # Comparison mode - generate with both providers with timeout
+            try:
+                comparison_result = await asyncio.wait_for(
+                    ai_service.compare_providers(
+                        request.prompt,
+                        request.website_type
+                    ),
+                    timeout=180  # 3 minutes for comparison mode (longer because it's two providers)
+                )
+            except asyncio.TimeoutError:
+                logger.error("Server timeout for comparison generation after 180 seconds")
+                return WebsiteResponse(
+                    success=False,
+                    error="Comparison generation timeout: Please try again with a simpler request.",
+                    provider="comparison"
+                )
             
             if comparison_result["success"]:
                 # Save comparison to database
