@@ -480,6 +480,44 @@ Importante: La mejora debe ser sustancial y claramente visible, manteniendo la c
     
     return base_prompt
 
+def create_custom_modification_prompt(enhancement: dict, current_content: str):
+    """Create a custom modification prompt for user-defined changes"""
+    
+    custom_prompt = f"""
+MODIFICACIÓN PERSONALIZADA: {enhancement.get('title', 'Custom Modification')}
+DESCRIPCIÓN: {enhancement.get('description', 'User-defined custom modification')}
+
+CONTENIDO ACTUAL A MODIFICAR:
+{current_content[:3000]}
+
+INSTRUCCIONES PERSONALIZADAS:
+{enhancement.get('custom_instructions', 'Apply the requested modifications')}
+
+REQUISITOS TÉCNICOS:
+- Mantén la estructura general del HTML
+- Conserva la funcionalidad existente
+- Asegura compatibilidad cross-browser
+- Usa CSS moderno pero compatible
+- Optimiza para performance y accesibilidad
+- Genera código limpio y bien comentado
+
+FORMATO DE RESPUESTA:
+=== FILE: index.html ===
+[HTML completo modificado]
+
+=== FILE: styles.css ===
+[CSS completo con modificaciones aplicadas]
+
+=== FILE: script.js ===
+[JavaScript con funcionalidades modificadas]
+
+=== END FILES ===
+
+Importante: Aplica exactamente las modificaciones solicitadas manteniendo la calidad profesional del sitio.
+"""
+    
+    return custom_prompt
+
 # ================================
 # TEMPLATE SYSTEM ENDPOINTS
 # ================================
