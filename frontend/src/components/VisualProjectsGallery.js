@@ -94,6 +94,21 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
   const openLivePreview = (project) => {
     setLivePreview(project);
     setSelectedProject(project);
+    // Initialize chat with welcome message
+    setChatMessages([
+      {
+        id: Date.now(),
+        type: 'ai',
+        message: `¡Hola! 👋 Soy tu asistente de mejoras de IA. Puedo ayudarte a modificar "${project.name || 'tu proyecto'}" de muchas formas. ¿Qué te gustaría cambiar o agregar?`,
+        timestamp: new Date().toISOString(),
+        suggestions: [
+          '💬 Agregar testimonios',
+          '📧 Formulario de contacto', 
+          '🎨 Cambiar colores',
+          '📱 Mejorar responsive'
+        ]
+      }
+    ]);
     // Generate AI enhancement suggestions
     generateEnhancementSuggestions(project);
   };
