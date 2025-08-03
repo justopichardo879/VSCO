@@ -594,6 +594,9 @@ class BackendTester:
         # Test 10: Project Retrieval
         self.test_project_retrieval(projects)
         
+        # Test 11: PROJECT DELETION FUNCTIONALITY (FOCUS TEST)
+        self.test_project_deletion_functionality()
+        
         # Generate Summary
         self.generate_summary()
 
