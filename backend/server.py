@@ -487,37 +487,58 @@ Importante: La mejora debe ser sustancial y claramente visible, manteniendo la c
 def create_custom_modification_prompt(enhancement: dict, current_content: str):
     """Create a custom modification prompt for user-defined changes"""
     
+    user_prompt = enhancement.get('prompt') or enhancement.get('description', '')
+    
     custom_prompt = f"""
-MODIFICACIÓN PERSONALIZADA: {enhancement.get('title', 'Custom Modification')}
-DESCRIPCIÓN: {enhancement.get('description', 'User-defined custom modification')}
+MODIFICACIÓN PERSONALIZADA SOLICITADA POR EL USUARIO:
+"{user_prompt}"
 
-CONTENIDO ACTUAL A MODIFICAR:
-{current_content[:3000]}
+CONTENIDO ACTUAL DEL SITIO WEB:
+{current_content[:4000]}
 
-INSTRUCCIONES PERSONALIZADAS:
-{enhancement.get('custom_instructions', 'Apply the requested modifications')}
+INSTRUCCIONES DETALLADAS:
+1. ANÁLISIS: Analiza cuidadosamente lo que el usuario quiere modificar o agregar
+2. IMPLEMENTACIÓN: Aplica exactamente lo solicitado manteniendo la calidad profesional
+3. INTEGRACIÓN: Asegúrate de que la modificación se integre perfectamente con el diseño existente
+4. CONSISTENCIA: Mantén el estilo visual y la estructura general del sitio
 
-REQUISITOS TÉCNICOS:
-- Mantén la estructura general del HTML
-- Conserva la funcionalidad existente
-- Asegura compatibilidad cross-browser
-- Usa CSS moderno pero compatible
-- Optimiza para performance y accesibilidad
-- Genera código limpio y bien comentado
+TIPOS DE MODIFICACIONES COMUNES:
+- Agregar nuevas secciones (testimonios, precios, contacto, características, etc.)
+- Modificar contenido existente (textos, colores, imágenes, etc.)
+- Mejorar elementos específicos (botones, formularios, navegación, etc.)
+- Cambiar el diseño o layout de secciones particulares
 
-FORMATO DE RESPUESTA:
+REQUISITOS TÉCNICOS OBLIGATORIOS:
+✓ Mantén la estructura HTML semántica y válida
+✓ Conserva toda la funcionalidad existente que no se modifique
+✓ Usa CSS moderno con flexbox/grid para nuevos elementos
+✓ Asegura responsividad móvil para cualquier adición
+✓ Aplica la paleta de colores existente o mejórala si es necesario
+✓ Optimiza para performance (CSS eficiente, imágenes optimizadas)
+✓ Incluye transiciones y animaciones suaves donde sea apropiado
+✓ Mantén accesibilidad (contraste, alt texts, ARIA labels)
+
+PAUTAS DE CALIDAD:
+- Si agregas secciones, hazlas visualment atractivas y profesionales
+- Si modificas contenido, mejóralo sin perder el mensaje original
+- Si cambias diseño, asegúrate de que sea una mejora real
+- Usa tipografía consistente con el resto del sitio
+- Aplica espaciado y márgenes coherentes
+- Incluye elementos interactivos apropiados (hover effects, etc.)
+
+FORMATO DE RESPUESTA OBLIGATORIO:
 === FILE: index.html ===
-[HTML completo modificado]
+[HTML completo con las modificaciones aplicadas]
 
 === FILE: styles.css ===
-[CSS completo con modificaciones aplicadas]
+[CSS completo incluyendo nuevos estilos para las modificaciones]
 
 === FILE: script.js ===
-[JavaScript con funcionalidades modificadas]
+[JavaScript con funcionalidades nuevas o modificadas si es necesario]
 
 === END FILES ===
 
-Importante: Aplica exactamente las modificaciones solicitadas manteniendo la calidad profesional del sitio.
+IMPORTANTE: La modificación debe ser sustancial, visible y profesional. Si el usuario pide algo específico, inclúyelo exactamente como se solicita pero con la mejor calidad posible.
 """
     
     return custom_prompt
