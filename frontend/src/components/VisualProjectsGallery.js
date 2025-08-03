@@ -904,6 +904,97 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
               ))}
             </div>
 
+            {/* Custom Prompt Modification */}
+            <div className="custom-modification">
+              <h4>✏️ Modificación por Prompt</h4>
+              <div className="modification-interface">
+                <div className="prompt-input-container">
+                  <textarea
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    placeholder="Escribe qué quieres modificar o agregar... Ej: 'Agrega una sección de testimonios con 3 reseñas de clientes'"
+                    className="custom-prompt-input"
+                    rows="3"
+                    disabled={promptModifying}
+                  />
+                  
+                  <div className="prompt-actions">
+                    <button 
+                      className="quick-suggestions-btn"
+                      onClick={() => setShowPromptSuggestions(!showPromptSuggestions)}
+                      disabled={promptModifying}
+                    >
+                      <span className="icon">💡</span>
+                      Ideas Rápidas
+                    </button>
+                    
+                    <button 
+                      className="apply-prompt-btn"
+                      onClick={applyCustomModification}
+                      disabled={promptModifying || !customPrompt.trim()}
+                    >
+                      {promptModifying ? (
+                        <>
+                          <span className="icon rotating">⚙️</span>
+                          Modificando...
+                        </>
+                      ) : (
+                        <>
+                          <span className="icon">✨</span>
+                          Aplicar Cambio
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick Modification Suggestions */}
+                {showPromptSuggestions && (
+                  <div className="quick-suggestions">
+                    <h5>💡 Modificaciones Populares</h5>
+                    <div className="suggestions-grid">
+                      {quickModifications.map((suggestion, index) => (
+                        <button
+                          key={index}
+                          className="quick-suggestion-btn"
+                          onClick={() => applyQuickModification(suggestion)}
+                          disabled={promptModifying}
+                        >
+                          <span className="suggestion-icon">{suggestion.icon}</span>
+                          <span className="suggestion-title">{suggestion.title}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Modification History */}
+                {modificationHistory.length > 0 && (
+                  <div className="modification-history">
+                    <h5>📝 Historial de Modificaciones</h5>
+                    <div className="history-list">
+                      {getModificationHistoryDisplay().map((mod) => (
+                        <div key={mod.id} className="history-item">
+                          <div className="history-content">
+                            <span className="history-prompt">{mod.shortPrompt}</span>
+                            <span className="history-time">{mod.timeAgo}</span>
+                          </div>
+                          <button 
+                            className="reuse-btn"
+                            onClick={() => setCustomPrompt(mod.prompt)}
+                            title="Reusar esta modificación"
+                          >
+                            🔄
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Manual Enhancement Tools */}
             <div className="manual-enhancement">
               <h4>✏️ Edición Manual</h4>
               <div className="manual-tools">
