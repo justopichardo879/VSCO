@@ -230,12 +230,16 @@ Esta acción NO se puede deshacer.`;
     try {
       console.log(`Aplicando mejora: ${enhancement.title}`);
       
-      const response = await axios.post(`${API_URL}/api/enhance-project`, {
+      const requestPayload = {
         project_id: project.id,
         enhancement: enhancement,
         apply: true,
         current_content: getProjectHTML(project)
-      });
+      };
+      
+      console.log('Request payload:', requestPayload);
+      
+      const response = await axios.post(`${API_URL}/api/enhance-project`, requestPayload);
       
       console.log('Enhancement response:', response.data);
       
