@@ -61,6 +61,68 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
     }
   };
 
+  // Función para eliminar proyectos
+  const deleteProject = async (project, event) => {
+    // Evitar que se ejecute la acción de abrir el proyecto
+    event.stopPropagation();
+
+    // Confirmación mejorada con más información
+    const confirmMessage = `⚠️ ¿Eliminar proyecto?
+
+📝 Nombre: "${project.name || 'Proyecto sin nombre'}"
+🤖 Generado con: ${project.metadata?.provider === 'openai' ? 'OpenAI' : 'Google Gemini'}
+📅 Creado: ${project.created_at ? new Date(project.created_at).toLocaleDateString() : 'Fecha desconocida'}
+
+Esta acción NO se puede deshacer.`;
+
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      // Mostrar indicador de carga
+      showNotification('🗑️ Eliminando proyecto...', 'info');
+      
+      const response = await axios.delete(`${API_URL}/api/projects/${project.id}`);
+      
+      if (response.data.success) {
+        // Éxito - mostrar notificación y recargar proyectos
+        showNotification('✅ ¡Proyecto eliminado exitosamente!', 'success');
+        
+        // Recargar la lista de proyectos
+        await fetchProjects();
+        
+        // Si el proyecto eliminado estaba siendo previsualizdo, cerrar el panel
+        if (livePreview && livePreview.id === project.id) {
+          setLivePreview(null);
+          setSelectedProject(null);
+        }
+      } else {
+        showNotification(`❌ Error: ${response.data.message || 'No se pudo eliminar el proyecto'}`, 'error');
+      }
+    } catch (error) {
+      console.error('Error eliminando proyecto:', error);
+      
+      // Manejar diferentes tipos de error
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 404) {
+          showNotification('⚠️ El proyecto ya no existe o fue eliminado', 'error');
+          // Refrescar la lista por si acaso
+          await fetchProjects();
+        } else if (status === 500) {
+          showNotification('❌ Error del servidor. Intenta más tarde', 'error');
+        } else {
+          showNotification(`❌ Error ${status}: ${error.response.data?.detail || 'Error desconocido'}`, 'error');
+        }
+      } else if (error.request) {
+        showNotification('🌐 Error de conexión. Verifica tu internet', 'error');
+      } else {
+        showNotification('❌ Error inesperado eliminando proyecto', 'error');
+      }
+    }
+  };
+
   const generateThumbnail = (project) => {
     const htmlContent = getProjectHTML(project);
     if (!htmlContent) return null;
