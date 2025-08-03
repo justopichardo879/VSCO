@@ -329,7 +329,10 @@ Esta acción NO se puede deshacer.`;
 
     try {
       const enhancement = enhancements[enhancementType];
-      if (!enhancement) return;
+      if (!enhancement) {
+        showNotification('❌ Tipo de mejora no válido', 'error');
+        return;
+      }
 
       console.log(`Aplicando mejora manual: ${enhancement.title}`);
       
@@ -344,7 +347,9 @@ Esta acción NO se puede deshacer.`;
         current_content: getProjectHTML(project)
       });
       
-      if (response.data.success) {
+      console.log('Manual enhancement response:', response.data);
+      
+      if (response.data.success && response.data.enhanced_project) {
         // Same update logic as automatic enhancements
         await fetchProjects();
         
@@ -366,10 +371,31 @@ Esta acción NO se puede deshacer.`;
         setTimeout(() => {
           generateEnhancementSuggestions(enhancedProject);
         }, 1000);
+      } else {
+        const errorMsg = response.data.error || 'No se recibió el proyecto mejorado del servidor';
+        console.error('Manual enhancement failed:', errorMsg);
+        showNotification(`❌ Error aplicando mejora: ${errorMsg}`, 'error');
       }
     } catch (error) {
       console.error('Error applying manual enhancement:', error);
-      showNotification('❌ Error aplicando mejora manual.', 'error');
+      
+      // Better error handling
+      if (error.response) {
+        const status = error.response.status;
+        const errorData = error.response.data;
+        
+        if (status === 500) {
+          showNotification('🚨 Error del servidor. Verifica las API keys de OpenAI/Gemini.', 'error');
+        } else if (status === 429) {
+          showNotification('⏳ Límite de API alcanzado. Intenta en unos minutos.', 'error');
+        } else {
+          showNotification(`❌ Error ${status}: ${errorData?.detail || 'Error desconocido'}`, 'error');
+        }
+      } else if (error.request) {
+        showNotification('🌐 Error de conexión. Verifica tu internet.', 'error');
+      } else {
+        showNotification('❌ Error inesperado aplicando mejora manual.', 'error');
+      }
     } finally {
       setEnhancing(false);
     }
