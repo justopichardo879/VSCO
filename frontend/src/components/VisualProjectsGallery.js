@@ -24,6 +24,12 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
   const [previewKey, setPreviewKey] = useState(0);
   const [inspectMode, setInspectMode] = useState(false);
   
+  // Custom prompt modification state
+  const [customPrompt, setCustomPrompt] = useState('');
+  const [promptModifying, setPromptModifying] = useState(false);
+  const [modificationHistory, setModificationHistory] = useState([]);
+  const [showPromptSuggestions, setShowPromptSuggestions] = useState(false);
+  
   const previewRef = useRef(null);
 
   useEffect(() => {
