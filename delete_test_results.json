@@ -1,0 +1,32 @@
+{
+  "summary": {
+    "total": 3,
+    "passed": 0,
+    "failed": 3,
+    "success_rate": 0.0
+  },
+  "results": [
+    {
+      "test": "DELETE Endpoint - Setup",
+      "success": false,
+      "details": "",
+      "error": "Could not create test project",
+      "timestamp": "2025-08-03T12:30:07.123845"
+    },
+    {
+      "test": "404 Error Handling",
+      "success": false,
+      "details": "",
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=30)",
+      "timestamp": "2025-08-03T12:30:37.201747"
+    },
+    {
+      "test": "GET /api/projects After Deletion",
+      "success": false,
+      "details": "",
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=30)",
+      "timestamp": "2025-08-03T12:31:07.260177"
+    }
+  ],
+  "timestamp": "2025-08-03T12:31:07.260530"
+}
