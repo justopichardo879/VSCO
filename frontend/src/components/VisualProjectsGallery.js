@@ -645,10 +645,63 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
             <div className="manual-enhancement">
               <h4>✏️ Edición Manual</h4>
               <div className="manual-tools">
-                <button className="manual-btn">🎨 Cambiar Colores</button>
-                <button className="manual-btn">📝 Editar Texto</button>
-                <button className="manual-btn">🖼️ Cambiar Imágenes</button>
-                <button className="manual-btn">⚙️ Configuración</button>
+                <button 
+                  className="manual-btn"
+                  onClick={() => applyManualEnhancement(livePreview, 'colors')}
+                  disabled={enhancing}
+                >
+                  <span className="manual-icon">🎨</span>
+                  <div className="manual-content">
+                    <span className="manual-title">Cambiar Colores</span>
+                    <span className="manual-desc">Actualizar paleta completa</span>
+                  </div>
+                  {enhancing && <span className="manual-loading">⏳</span>}
+                </button>
+                
+                <button 
+                  className="manual-btn"
+                  onClick={() => applyManualEnhancement(livePreview, 'text')}
+                  disabled={enhancing}
+                >
+                  <span className="manual-icon">📝</span>
+                  <div className="manual-content">
+                    <span className="manual-title">Editar Texto</span>
+                    <span className="manual-desc">Mejorar contenido y copy</span>
+                  </div>
+                  {enhancing && <span className="manual-loading">⏳</span>}
+                </button>
+                
+                <button 
+                  className="manual-btn"
+                  onClick={() => applyManualEnhancement(livePreview, 'images')}
+                  disabled={enhancing}
+                >
+                  <span className="manual-icon">🖼️</span>
+                  <div className="manual-content">
+                    <span className="manual-title">Cambiar Imágenes</span>
+                    <span className="manual-desc">Optimizar elementos visuales</span>
+                  </div>
+                  {enhancing && <span className="manual-loading">⏳</span>}
+                </button>
+                
+                <button 
+                  className="manual-btn"
+                  onClick={() => applyManualEnhancement(livePreview, 'config')}
+                  disabled={enhancing}
+                >
+                  <span className="manual-icon">⚙️</span>
+                  <div className="manual-content">
+                    <span className="manual-title">Configuración</span>
+                    <span className="manual-desc">SEO y optimización técnica</span>
+                  </div>
+                  {enhancing && <span className="manual-loading">⏳</span>}
+                </button>
+              </div>
+              
+              {/* Project Summary */}
+              <div className="project-summary">
+                <h4>📊 Resumen del Proyecto</h4>
+                <ProjectSummary project={livePreview} />
               </div>
             </div>
           </div>
