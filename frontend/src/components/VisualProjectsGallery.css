@@ -508,16 +508,48 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 16px;
+  position: relative;
+  overflow: hidden;
 }
 
 .quick-action:hover {
   background: #edf2f7;
   transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.quick-action.danger {
+  background: #fed7d7;
+  border: 1px solid #fbb6ce;
 }
 
 .quick-action.danger:hover {
-  background: #fed7d7;
-  color: #e53e3e;
+  background: #fc8181;
+  color: white;
+  transform: scale(1.15);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+  border-color: #e53e3e;
+}
+
+.quick-action.danger:active {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* Delete button shake animation */
+.quick-action.danger .icon {
+  transition: transform 0.2s ease;
+}
+
+.quick-action.danger:hover .icon {
+  animation: deleteShake 0.5s ease-in-out;
+}
+
+@keyframes deleteShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
 }
 
 .enhancement-indicator {
