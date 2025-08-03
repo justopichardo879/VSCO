@@ -1033,37 +1033,169 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
           <div className="enhancement-panel">
             <div className="panel-header">
               <h3>🚀 Mejoras con IA</h3>
-              <div className="panel-status">
-                {enhancing ? 
-                  <span className="loading-dots">Analizando...</span> : 
-                  <span className="ready-indicator">✨ Listo</span>
-                }
+              <div className="panel-controls">
+                <button 
+                  className={`mode-toggle ${chatMode === 'suggestions' ? 'active' : ''}`}
+                  onClick={() => setChatMode('suggestions')}
+                >
+                  💡 Sugerencias
+                </button>
+                <button 
+                  className={`mode-toggle ${chatMode === 'chat' ? 'active' : ''}`}
+                  onClick={() => setChatMode('chat')}
+                >
+                  💬 Chat IA
+                </button>
               </div>
             </div>
 
-            <div className="suggestions-list">
-              {enhancementSuggestions.map((suggestion, index) => (
-                <div key={index} className={`suggestion-card ${suggestion.impact}`}>
-                  <div className="suggestion-header">
-                    <span className="suggestion-icon">{suggestion.icon}</span>
-                    <div className="suggestion-info">
-                      <h4>{suggestion.title}</h4>
-                      <span className={`impact-badge ${suggestion.impact}`}>
-                        {suggestion.impact === 'high' ? 'Alto Impacto' : 'Medio Impacto'}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="suggestion-description">{suggestion.description}</p>
-                  <button 
-                    className="apply-btn"
-                    onClick={() => applyEnhancement(livePreview, suggestion)}
-                    disabled={enhancing}
-                  >
-                    {enhancing ? 'Aplicando...' : 'Aplicar Mejora'}
-                  </button>
+            {chatMode === 'suggestions' ? (
+              // Original suggestions interface
+              <>
+                <div className="panel-status">
+                  {enhancing ? 
+                    <span className="loading-dots">Analizando...</span> : 
+                    <span className="ready-indicator">✨ Listo</span>
+                  }
                 </div>
-              ))}
-            </div>
+
+                <div className="suggestions-list">
+                  {enhancementSuggestions.map((suggestion, index) => (
+                    <div key={index} className={`suggestion-card ${suggestion.impact}`}>
+                      <div className="suggestion-header">
+                        <span className="suggestion-icon">{suggestion.icon}</span>
+                        <div className="suggestion-info">
+                          <h4>{suggestion.title}</h4>
+                          <span className={`impact-badge ${suggestion.impact}`}>
+                            {suggestion.impact === 'high' ? 'Alto Impacto' : 'Medio Impacto'}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="suggestion-description">{suggestion.description}</p>
+                      <button 
+                        className="apply-btn"
+                        onClick={() => applyEnhancement(livePreview, suggestion)}
+                        disabled={enhancing}
+                      >
+                        {enhancing ? 'Aplicando...' : 'Aplicar Mejora'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              // Interactive Chat Interface
+              <div className="chat-interface">
+                <div className="chat-messages">
+                  {chatMessages.map((message) => (
+                    <div key={message.id} className={`chat-message ${message.type}`}>
+                      <div className="message-avatar">
+                        {message.type === 'user' ? '👤' : '🤖'}
+                      </div>
+                      <div className="message-content">
+                        <div className="message-bubble">
+                          <div 
+                            className="message-text"
+                            dangerouslySetInnerHTML={{ 
+                              __html: message.message.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            }} 
+                          />
+                          <div className="message-time">
+                            {new Date(message.timestamp).toLocaleTimeString('es-ES', { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </div>
+                        </div>
+                        
+                        {message.suggestions && (
+                          <div className="message-suggestions">
+                            {message.suggestions.map((suggestion, idx) => (
+                              <button
+                                key={idx}
+                                className="suggestion-chip"
+                                onClick={() => setChatInput(suggestion.replace(/^[^\s]*\s/, ''))}
+                                disabled={isChatLoading}
+                              >
+                                {suggestion}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {isChatLoading && (
+                    <div className="chat-message ai">
+                      <div className="message-avatar">🤖</div>
+                      <div className="message-content">
+                        <div className="message-bubble loading">
+                          <div className="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                          <div className="loading-text">Aplicando cambios...</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div ref={chatEndRef} />
+                </div>
+
+                <div className="chat-input-container">
+                  <div className="chat-input-wrapper">
+                    <textarea
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyPress={handleChatKeyPress}
+                      placeholder="Escribe qué quieres modificar... Ej: 'Agrega testimonios de clientes'"
+                      className="chat-input"
+                      rows="1"
+                      disabled={isChatLoading}
+                    />
+                    <button
+                      onClick={sendChatMessage}
+                      disabled={!chatInput.trim() || isChatLoading}
+                      className="chat-send-btn"
+                    >
+                      {isChatLoading ? (
+                        <span className="icon rotating">⚙️</span>
+                      ) : (
+                        <span className="icon">🚀</span>
+                      )}
+                    </button>
+                  </div>
+                  
+                  <div className="chat-quick-actions">
+                    <button 
+                      className="quick-action-chip"
+                      onClick={() => setChatInput('Agrega una sección de testimonios con 3 reseñas')}
+                      disabled={isChatLoading}
+                    >
+                      💬 Testimonios
+                    </button>
+                    <button 
+                      className="quick-action-chip"
+                      onClick={() => setChatInput('Agrega un formulario de contacto')}
+                      disabled={isChatLoading}
+                    >
+                      📧 Contacto
+                    </button>
+                    <button 
+                      className="quick-action-chip"
+                      onClick={() => setChatInput('Cambia la paleta de colores a tonos más modernos')}
+                      disabled={isChatLoading}
+                    >
+                      🎨 Colores
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
             {/* Custom Prompt Modification */}
             <div className="custom-modification">
