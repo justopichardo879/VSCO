@@ -245,14 +245,10 @@ async def enhance_project(request: dict):
         enhancement = request.get("enhancement")
         apply_enhancement = request.get("apply", False)
 
-        logger.info(f"Enhancing project {project_id} with type: {enhancement_type}, modification: {modification_type}")
+        logger.info(f"Enhancing project {project_id} with type: {enhancement_type}, modification: {modification_type}, apply: {apply_enhancement}")
 
-        if enhancement_type == "suggestions":
-            # Generate smart enhancement suggestions based on content analysis
-            suggestions = await generate_smart_suggestions(current_content)
-            return {"success": True, "suggestions": suggestions}
-
-        elif apply_enhancement and enhancement:
+        # Priority: If apply_enhancement is True, apply the enhancement regardless of enhancement_type
+        if apply_enhancement and enhancement:
             # Handle different modification types
             if modification_type == "custom_prompt":
                 enhanced_prompt = create_custom_modification_prompt(enhancement, current_content)
@@ -298,6 +294,11 @@ async def enhance_project(request: dict):
                 error_msg = result.get("error", "AI service failed to enhance the project")
                 logger.error(f"AI enhancement failed: {error_msg}")
                 return {"success": False, "error": error_msg}
+
+        elif enhancement_type == "suggestions":
+            # Generate smart enhancement suggestions based on content analysis
+            suggestions = await generate_smart_suggestions(current_content)
+            return {"success": True, "suggestions": suggestions}
 
         return {"success": False, "error": "Invalid enhancement request"}
 
