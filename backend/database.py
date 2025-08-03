@@ -115,9 +115,27 @@ class DatabaseService:
             cursor = self.db.projects.find(query).sort("created_at", -1).skip(skip).limit(per_page)
             projects = await cursor.to_list(length=per_page)
             
-            # Convert ObjectIds to strings
+            # Convert ObjectIds to strings and normalize files format
             for project in projects:
                 project["_id"] = str(project["_id"])
+                
+                # Normalize files format - ensure it's always a list
+                if "files" in project:
+                    files = project["files"]
+                    if isinstance(files, dict):
+                        # Convert dict format to list format
+                        normalized_files = []
+                        for filename, content in files.items():
+                            file_type = "html" if ".html" in filename else "css" if ".css" in filename else "js" if ".js" in filename else "other"
+                            normalized_files.append({
+                                "filename": filename,
+                                "content": content,
+                                "file_type": file_type
+                            })
+                        project["files"] = normalized_files
+                    elif not isinstance(files, list):
+                        # If it's neither dict nor list, create empty list
+                        project["files"] = []
             
             return {
                 "projects": projects,
