@@ -1,81 +1,88 @@
 {
   "summary": {
-    "total": 10,
+    "total": 11,
     "passed": 1,
-    "failed": 9,
-    "success_rate": 10.0
+    "failed": 10,
+    "success_rate": 9.090909090909092
   },
   "results": [
     {
       "test": "API Root Endpoint",
       "success": false,
       "details": "",
-      "error": "HTTP 502: ",
-      "timestamp": "2025-08-02T19:22:42.106026"
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
+      "timestamp": "2025-08-03T12:23:52.680775"
     },
     {
       "test": "API Keys Configuration",
       "success": true,
       "details": "Both OpenAI and Gemini API keys configured",
       "error": "",
-      "timestamp": "2025-08-02T19:22:42.106483"
+      "timestamp": "2025-08-03T12:23:52.680992"
     },
     {
       "test": "AI Providers Configuration",
       "success": false,
       "details": "",
-      "error": "HTTP 502: ",
-      "timestamp": "2025-08-02T19:22:42.121672"
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
+      "timestamp": "2025-08-03T12:24:02.736824"
     },
     {
       "test": "Website Types Endpoint",
       "success": false,
       "details": "",
-      "error": "HTTP 502: ",
-      "timestamp": "2025-08-02T19:22:42.136778"
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
+      "timestamp": "2025-08-03T12:24:12.804521"
     },
     {
       "test": "Database Connectivity",
       "success": false,
       "details": "",
-      "error": "Failed to create status: HTTP 502",
-      "timestamp": "2025-08-02T19:22:42.154162"
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
+      "timestamp": "2025-08-03T12:24:22.850570"
     },
     {
       "test": "OpenAI Website Generation",
       "success": false,
       "details": "",
-      "error": "HTTP 502: ",
-      "timestamp": "2025-08-02T19:22:42.174935"
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=60)",
+      "timestamp": "2025-08-03T12:25:22.940372"
     },
     {
       "test": "Gemini Website Generation",
       "success": false,
       "details": "",
-      "error": "HTTP 502: ",
-      "timestamp": "2025-08-02T19:22:42.192882"
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=60)",
+      "timestamp": "2025-08-03T12:26:23.033006"
     },
     {
       "test": "Provider Comparison Mode",
       "success": false,
       "details": "",
-      "error": "HTTP 502: ",
-      "timestamp": "2025-08-02T19:22:42.206744"
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=120)",
+      "timestamp": "2025-08-03T12:28:23.167128"
     },
     {
       "test": "Projects List Endpoint",
       "success": false,
       "details": "",
-      "error": "HTTP 502: ",
-      "timestamp": "2025-08-02T19:22:42.227311"
+      "error": "HTTPSConnectionPool(host='7560c1a7-4795-4406-bfe1-12b599ee9d8a.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
+      "timestamp": "2025-08-03T12:28:33.216547"
     },
     {
       "test": "Project Retrieval",
       "success": false,
       "details": "",
       "error": "No projects available to test",
-      "timestamp": "2025-08-02T19:22:42.227566"
+      "timestamp": "2025-08-03T12:28:33.216631"
+    },
+    {
+      "test": "Project Deletion Setup",
+      "success": false,
+      "details": "",
+      "error": "Could not create test project for deletion testing",
+      "timestamp": "2025-08-03T12:29:43.377526"
     }
   ],
-  "timestamp": "2025-08-02T19:22:42.227792"
+  "timestamp": "2025-08-03T12:29:43.377820"
 }
