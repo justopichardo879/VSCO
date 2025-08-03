@@ -253,9 +253,11 @@ async def enhance_project(request: dict):
             return {"success": True, "suggestions": suggestions}
 
         elif apply_enhancement and enhancement:
-            # Handle custom prompt modifications
+            # Handle different modification types
             if modification_type == "custom_prompt":
                 enhanced_prompt = create_custom_modification_prompt(enhancement, current_content)
+            elif modification_type == "chat_interactive":
+                enhanced_prompt = create_chat_modification_prompt(enhancement, current_content)
             else:
                 enhanced_prompt = create_enhancement_prompt(enhancement, current_content)
 
