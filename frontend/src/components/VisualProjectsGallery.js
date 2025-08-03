@@ -990,7 +990,11 @@ Esta acción NO se puede deshacer.`;
               <button className="quick-action" title="Compartir">
                 <span className="icon">🔗</span>
               </button>
-              <button className="quick-action danger" title="Eliminar">
+              <button 
+                className="quick-action danger" 
+                title="Eliminar"
+                onClick={(e) => deleteProject(project, e)}
+              >
                 <span className="icon">🗑️</span>
               </button>
             </div>
