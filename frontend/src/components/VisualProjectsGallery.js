@@ -237,7 +237,9 @@ Esta acción NO se puede deshacer.`;
         current_content: getProjectHTML(project)
       });
       
-      if (response.data.success) {
+      console.log('Enhancement response:', response.data);
+      
+      if (response.data.success && response.data.enhanced_project) {
         // Update projects list
         await fetchProjects();
         
@@ -269,11 +271,30 @@ Esta acción NO se puede deshacer.`;
         }, 1000);
         
       } else {
-        showNotification(`❌ Error aplicando mejora: ${response.data.error}`, 'error');
+        const errorMsg = response.data.error || 'No se recibió el proyecto mejorado del servidor';
+        console.error('Enhancement failed:', errorMsg);
+        showNotification(`❌ Error aplicando mejora: ${errorMsg}`, 'error');
       }
     } catch (error) {
       console.error('Error applying enhancement:', error);
-      showNotification('❌ Error aplicando mejora. Intenta nuevamente.', 'error');
+      
+      // Better error handling
+      if (error.response) {
+        const status = error.response.status;
+        const errorData = error.response.data;
+        
+        if (status === 500) {
+          showNotification('🚨 Error del servidor. Es posible que no tengas API keys configuradas.', 'error');
+        } else if (status === 429) {
+          showNotification('⏳ Límite de API alcanzado. Intenta en unos minutos.', 'error');
+        } else {
+          showNotification(`❌ Error ${status}: ${errorData?.detail || 'Error desconocido'}`, 'error');
+        }
+      } else if (error.request) {
+        showNotification('🌐 Error de conexión. Verifica tu internet.', 'error');
+      } else {
+        showNotification('❌ Error inesperado aplicando mejora. Intenta nuevamente.', 'error');
+      }
     } finally {
       setEnhancing(false);
     }
