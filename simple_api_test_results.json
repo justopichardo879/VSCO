@@ -1,0 +1,36 @@
+{
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "success_rate": 100.0
+  },
+  "results": [
+    {
+      "test": "API Root",
+      "success": true,
+      "details": "Working"
+    },
+    {
+      "test": "Projects List",
+      "success": true,
+      "details": "8 projects"
+    },
+    {
+      "test": "Project Deletion",
+      "success": true,
+      "details": "Deleted successfully"
+    },
+    {
+      "test": "Deletion Verification",
+      "success": true,
+      "details": "Count: 8 \u2192 7"
+    },
+    {
+      "test": "404 Error Handling",
+      "success": true,
+      "details": "Correct 404 response"
+    }
+  ],
+  "timestamp": "2025-08-03T12:33:59.126925"
+}
