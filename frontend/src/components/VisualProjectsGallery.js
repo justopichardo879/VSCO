@@ -484,6 +484,16 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
     return `Hace ${diffDays}d`;
   };
 
+  const extractColorScheme = (htmlContent) => {
+    const colors = [];
+    const colorRegex = /#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|rgb\([^)]+\)|rgba\([^)]+\)/g;
+    const matches = htmlContent.match(colorRegex);
+    if (matches) {
+      colors.push(...matches.slice(0, 5));
+    }
+    return colors;
+  };
+
   // Project Summary Component
   const ProjectSummary = ({ project }) => {
     const [summary, setSummary] = useState(null);
