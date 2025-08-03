@@ -261,12 +261,16 @@ async def enhance_project(request: dict):
             else:
                 enhanced_prompt = create_enhancement_prompt(enhancement, current_content)
 
+            logger.info(f"Enhanced prompt created: {enhanced_prompt[:100]}...")
+
             # Use AI service to enhance the project
             result = await ai_service.generate_website(
                 enhanced_prompt,
                 "openai",  # Default to OpenAI for enhancements
                 "enhancement"
             )
+
+            logger.info(f"AI service result: {result.get('success', False)}")
 
             if result["success"]:
                 # Update the project in database
@@ -275,10 +279,12 @@ async def enhance_project(request: dict):
                     "metadata": {
                         **result.get("metadata", {}),
                         "enhanced": True,
-                        "enhancement_applied": enhancement['title'],
+                        "enhancement_applied": enhancement.get('title', 'Unknown'),
                         "enhanced_at": datetime.utcnow().isoformat()
                     }
                 })
+
+                logger.info(f"Project {project_id} updated successfully")
 
                 return {
                     "success": True,
@@ -288,6 +294,10 @@ async def enhance_project(request: dict):
                         "metadata": result.get("metadata", {})
                     }
                 }
+            else:
+                error_msg = result.get("error", "AI service failed to enhance the project")
+                logger.error(f"AI enhancement failed: {error_msg}")
+                return {"success": False, "error": error_msg}
 
         return {"success": False, "error": "Invalid enhancement request"}
 
