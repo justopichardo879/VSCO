@@ -65,12 +65,23 @@ async def generate_website(request: WebsiteGenerationRequest):
         logger.info(f"Generating website with {request.provider or 'comparison'} for: {request.prompt}")
         
         if request.provider:
-            # Single provider generation
-            result = await ai_service.generate_website(
-                request.prompt, 
-                request.provider, 
-                request.website_type
-            )
+            # Single provider generation with timeout
+            try:
+                result = await asyncio.wait_for(
+                    ai_service.generate_website(
+                        request.prompt, 
+                        request.provider, 
+                        request.website_type
+                    ),
+                    timeout=150  # 2.5 minutes total timeout
+                )
+            except asyncio.TimeoutError:
+                logger.error(f"Server timeout for {request.provider} generation after 150 seconds")
+                return WebsiteResponse(
+                    success=False,
+                    error="Generation timeout: Please try again with a simpler request.",
+                    provider=request.provider
+                )
             
             if result["success"]:
                 # Save to database
