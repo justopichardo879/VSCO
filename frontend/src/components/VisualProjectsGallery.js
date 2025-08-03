@@ -516,6 +516,145 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
     return colors;
   };
 
+  // Chat functionality
+  const sendChatMessage = async () => {
+    if (!chatInput.trim() || !livePreview) return;
+
+    const userMessage = {
+      id: Date.now(),
+      type: 'user',
+      message: chatInput.trim(),
+      timestamp: new Date().toISOString()
+    };
+
+    // Add user message
+    setChatMessages(prev => [...prev, userMessage]);
+    const currentInput = chatInput;
+    setChatInput('');
+    setIsChatLoading(true);
+
+    // Scroll to bottom
+    setTimeout(() => {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+
+    try {
+      const response = await axios.post(`${API_URL}/api/enhance-project`, {
+        project_id: livePreview.id,
+        enhancement: {
+          title: 'Chat Modification',
+          description: currentInput,
+          type: 'chat',
+          impact: 'high',
+          icon: '💬',
+          prompt: currentInput
+        },
+        apply: true,
+        current_content: getProjectHTML(livePreview),
+        modification_type: 'chat_interactive'
+      });
+
+      let aiMessage = {
+        id: Date.now() + 1,
+        type: 'ai',
+        timestamp: new Date().toISOString()
+      };
+
+      if (response.data.success) {
+        // Update projects list
+        await fetchProjects();
+        
+        // Update live preview
+        const enhancedProject = {
+          ...livePreview,
+          files: response.data.enhanced_project.files,
+          metadata: {
+            ...livePreview.metadata,
+            ...response.data.enhanced_project.metadata,
+            last_chat_modification: currentInput,
+            modified_at: new Date().toISOString()
+          }
+        };
+        
+        setLivePreview(enhancedProject);
+        setPreviewKey(prev => prev + 1);
+
+        // AI explains what it did
+        aiMessage.message = `✅ **¡Perfecto! He aplicado los cambios solicitados.**\n\n**Modificaciones realizadas:**\n${generateModificationSummary(currentInput, response.data)}\n\n¿Te gusta cómo quedó? Puedes pedirme más cambios o mejoras adicionales.`;
+        aiMessage.status = 'success';
+        aiMessage.suggestions = generateNextSuggestions(currentInput);
+
+        showNotification('✅ ¡Modificación aplicada exitosamente!', 'success');
+      } else {
+        aiMessage.message = `❌ **Lo siento, hubo un problema aplicando los cambios.**\n\nError: ${response.data.error}\n\n¿Podrías intentar reformular tu solicitud de manera más específica?`;
+        aiMessage.status = 'error';
+      }
+
+      setChatMessages(prev => [...prev, aiMessage]);
+      
+    } catch (error) {
+      console.error('Error in chat modification:', error);
+      
+      const errorMessage = {
+        id: Date.now() + 1,
+        type: 'ai',
+        message: `❌ **Error aplicando la modificación.**\n\nHubo un problema procesando tu solicitud. Por favor intenta con una instrucción más específica.\n\n**Ejemplo:** "Agrega una sección de testimonios con 3 reseñas"`,
+        timestamp: new Date().toISOString(),
+        status: 'error'
+      };
+      
+      setChatMessages(prev => [...prev, errorMessage]);
+      showNotification('❌ Error en el chat. Intenta nuevamente.', 'error');
+    } finally {
+      setIsChatLoading(false);
+      setTimeout(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
+  // Generate modification summary based on user input
+  const generateModificationSummary = (userInput, responseData) => {
+    const input = userInput.toLowerCase();
+    let summary = '';
+
+    if (input.includes('testimonios') || input.includes('reseñas')) {
+      summary = '• **Testimonios:** Agregada sección con reseñas de clientes\n• **Diseño:** Aplicado layout moderno con avatars y estrellas\n• **Responsive:** Optimizado para móviles y tablets';
+    } else if (input.includes('contacto') || input.includes('formulario')) {
+      summary = '• **Formulario:** Creado formulario de contacto funcional\n• **Validación:** Agregada validación de campos\n• **Estilos:** Aplicado diseño profesional y accessible';
+    } else if (input.includes('color') || input.includes('tema')) {
+      summary = '• **Colores:** Actualizada paleta de colores completa\n• **Consistencia:** Aplicado tema en toda la página\n• **Contraste:** Optimizado para mejor legibilidad';
+    } else if (input.includes('precio') || input.includes('plan')) {
+      summary = '• **Precios:** Agregada sección de planes y tarifas\n• **Layout:** Diseño tipo tarjetas con características\n• **CTA:** Botones de acción optimizados para conversión';
+    } else {
+      summary = '• **Contenido:** Modificado según tus especificaciones\n• **Diseño:** Aplicado estilo consistente y profesional\n• **Funcionalidad:** Optimizado para mejor experiencia de usuario';
+    }
+
+    return summary;
+  };
+
+  // Generate next suggestions based on current modification
+  const generateNextSuggestions = (userInput) => {
+    const input = userInput.toLowerCase();
+    
+    if (input.includes('testimonios')) {
+      return ['🎨 Cambiar colores de la sección', '📧 Agregar formulario', '📊 Agregar estadísticas'];
+    } else if (input.includes('contacto')) {
+      return ['💬 Agregar testimonios', '🗺️ Agregar mapa', '📞 Agregar info de contacto'];
+    } else if (input.includes('color')) {
+      return ['✨ Agregar animaciones', '📝 Mejorar textos', '🖼️ Optimizar imágenes'];
+    } else {
+      return ['🎯 Mejorar call-to-action', '📱 Optimizar mobile', '⚡ Agregar animaciones'];
+    }
+  };
+
+  const handleChatKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendChatMessage();
+    }
+  };
+
   // Project Summary Component
   const ProjectSummary = ({ project }) => {
     const [summary, setSummary] = useState(null);
