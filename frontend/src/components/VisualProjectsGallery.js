@@ -349,6 +349,123 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
     return colors;
   };
 
+  // Project Summary Component
+  const ProjectSummary = ({ project }) => {
+    const [summary, setSummary] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      if (project) {
+        generateProjectSummary(project).then(result => {
+          setSummary(result);
+          setLoading(false);
+        });
+      }
+    }, [project]);
+
+    if (loading) {
+      return (
+        <div className="summary-loading">
+          <div className="loading-dots">Analizando proyecto...</div>
+        </div>
+      );
+    }
+
+    if (!summary) {
+      return (
+        <div className="summary-error">
+          <span className="error-icon">⚠️</span>
+          <span>Error generando resumen</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className="summary-content">
+        <div className="summary-title">
+          <h5>🏷️ {summary.title}</h5>
+        </div>
+        
+        <div className="summary-stats">
+          <div className="stat-item">
+            <span className="stat-icon">📝</span>
+            <span className="stat-label">{summary.estimatedWords} palabras</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-icon">🔗</span>
+            <span className="stat-label">{summary.elementsCount.links} enlaces</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-icon">🖼️</span>
+            <span className="stat-label">{summary.elementsCount.images} imágenes</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-icon">🔘</span>
+            <span className="stat-label">{summary.elementsCount.buttons} botones</span>
+          </div>
+        </div>
+
+        {summary.headings.length > 0 && (
+          <div className="summary-sections">
+            <h6>📋 Secciones principales:</h6>
+            <ul className="sections-list">
+              {summary.headings.map((heading, index) => (
+                <li key={index} className="section-item">
+                  {heading.length > 40 ? heading.substring(0, 40) + '...' : heading}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {summary.keyContent.length > 0 && (
+          <div className="summary-content-preview">
+            <h6>💬 Contenido clave:</h6>
+            {summary.keyContent.map((content, index) => (
+              <p key={index} className="content-snippet">
+                {content.length > 100 ? content.substring(0, 100) + '...' : content}
+              </p>
+            ))}
+          </div>
+        )}
+
+        <div className="summary-features">
+          <h6>✨ Características:</h6>
+          <div className="features-list">
+            {summary.hasNavigation && (
+              <span className="feature-tag">📍 Navegación</span>
+            )}
+            {summary.hasFooter && (
+              <span className="feature-tag">🦶 Footer</span>
+            )}
+            {summary.elementsCount.sections > 0 && (
+              <span className="feature-tag">📦 {summary.elementsCount.sections} Secciones</span>
+            )}
+            {summary.colorScheme.length > 0 && (
+              <span className="feature-tag">🎨 Colores personalizados</span>
+            )}
+          </div>
+        </div>
+
+        {summary.colorScheme.length > 0 && (
+          <div className="color-palette">
+            <h6>🎨 Paleta de colores:</h6>
+            <div className="colors-preview">
+              {summary.colorScheme.slice(0, 5).map((color, index) => (
+                <div 
+                  key={index}
+                  className="color-swatch"
+                  style={{ backgroundColor: color }}
+                  title={color}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // Device viewport controls
   const handleDeviceChange = (device) => {
     setPreviewDevice(device);
