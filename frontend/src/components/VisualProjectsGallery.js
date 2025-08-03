@@ -377,6 +377,14 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
       {/* Header with controls */}
       <div className="gallery-header">
         <div className="header-main">
+          <div className="header-top">
+            {onBack && (
+              <button className="back-button" onClick={onBack}>
+                <span className="icon">←</span>
+                Volver al Generador
+              </button>
+            )}
+          </div>
           <h1 className="gallery-title">
             <span className="title-icon">🚀</span>
             Tus Proyectos Visuales
