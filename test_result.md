@@ -213,11 +213,11 @@ frontend:
         
   - task: "Project Management System"
     implemented: true
-    working: true
-    file: "components.js"
-    stuck_count: 0
+    working: false
+    file: "components/VisualProjectsGallery.js"
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -237,6 +237,12 @@ frontend:
       - working: true
         agent: "testing"
         comment: "🎉 CRITICAL ISSUE RESOLVED - PROJECT VISUALIZATION WORKING PERFECTLY! Comprehensive testing confirms: ✅ Projects load from API (1 project found), ✅ Modal opens successfully with 'Ver' button, ✅ Iframe shows ACTUAL website content (11,319 characters of HTML), ✅ Debug logs working ('Found HTML content: true'), ✅ renderProjectPreview function working correctly, ✅ Download functionality FIXED and working (HTML downloads successfully), ✅ Edit and delete functions available. The original user-reported issue about iframe not showing website content is COMPLETELY RESOLVED. The iframe now displays the full generated website correctly."
+      - working: false
+        agent: "user"
+        comment: "Usuario reporta: 'La opción de borrar proyecto no hace nada!' - Los botones de eliminar no tienen funcionalidad."
+      - working: true
+        agent: "main"
+        comment: "🗑️ FUNCIÓN ELIMINAR PROYECTO ARREGLADA: Implementada función deleteProject en VisualProjectsGallery.js con confirmación mejorada, manejo de errores robusto, notificaciones visuales y animaciones suaves. Backend DELETE endpoint funciona correctamente. Botón de eliminar ahora tiene onClick asociado y ejecuta la función correctamente. Incluye verificación de confirmación detallada con información del proyecto, notificaciones de éxito/error y recarga automática de la lista de proyectos."
 
 metadata:
   created_by: "main_agent"
