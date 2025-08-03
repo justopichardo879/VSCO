@@ -30,7 +30,14 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
   const [modificationHistory, setModificationHistory] = useState([]);
   const [showPromptSuggestions, setShowPromptSuggestions] = useState(false);
   
+  // Interactive chat state
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const [chatMode, setChatMode] = useState('suggestions'); // 'suggestions' or 'chat'
+  
   const previewRef = useRef(null);
+  const chatEndRef = useRef(null);
 
   useEffect(() => {
     fetchProjects();
