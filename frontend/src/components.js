@@ -600,11 +600,35 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
   const downloadSingleFile = (project, fileName) => {
     let fileContent = null;
     
+    console.log('Attempting to download file:', fileName);
+    console.log('Project files structure:', project.files);
+    
     // Try to find file content in different structures
     if (project.files && Array.isArray(project.files)) {
-      const file = project.files.find(f => f.filename === fileName);
+      console.log('Files is array, searching for:', fileName);
+      // Try exact match first
+      let file = project.files.find(f => f.filename === fileName);
+      
+      // If not found, try partial match (in case of extra characters)
+      if (!file) {
+        file = project.files.find(f => f.filename && f.filename.includes(fileName.split('.')[0]));
+      }
+      
+      // If still not found, try different common variations
+      if (!file && fileName === 'index.html') {
+        file = project.files.find(f => 
+          f.filename && (
+            f.filename.toLowerCase().includes('html') ||
+            f.filename.toLowerCase().includes('index')
+          )
+        );
+      }
+      
       if (file) {
         fileContent = file.content;
+        console.log('Found file content, length:', fileContent ? fileContent.length : 0);
+      } else {
+        console.log('Available files:', project.files.map(f => f.filename));
       }
     } else if (project.files && typeof project.files === 'object') {
       fileContent = project.files[fileName];
@@ -613,6 +637,7 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
     if (!fileContent) {
       alert(`El archivo ${fileName} no está disponible`);
       console.log('Archivo no encontrado:', fileName, 'en proyecto:', project);
+      console.log('Available files:', project.files);
       return;
     }
 
