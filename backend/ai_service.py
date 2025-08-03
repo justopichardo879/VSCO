@@ -113,7 +113,7 @@ Always generate complete, production-ready code that looks professional and mode
                     "prompt": prompt,
                     "enhanced_prompt": enhanced_prompt,
                     "provider": provider,
-                    "model": "gpt-4.1" if provider == "openai" else "gemini-2.5-pro-preview-05-06"
+                    "model": "gpt-4.1" if provider == "openai" else "gemini-1.5-flash"
                 }
             }
             
