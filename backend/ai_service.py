@@ -40,17 +40,68 @@ Always generate complete, production-ready code that looks professional and mode
     async def create_chat_instance(self, provider: str, session_id: str, model: str = None):
         """Create a chat instance based on the provider and specific model"""
 
-        # Model configurations with their token limits
+        # Model configurations with their token limits and local endpoints
         model_configs = {
-            # OpenAI models
-            "gpt-3.5-turbo": {"provider": "openai", "max_tokens": 4096},
-            "gpt-4.1": {"provider": "openai", "max_tokens": 8192},
-            "gpt-4o": {"provider": "openai", "max_tokens": 8192},
+            # OpenAI models (API-based)
+            "gpt-3.5-turbo": {"provider": "openai", "max_tokens": 4096, "type": "api"},
+            "gpt-4.1": {"provider": "openai", "max_tokens": 8192, "type": "api"},
+            "gpt-4o": {"provider": "openai", "max_tokens": 8192, "type": "api"},
             
-            # Gemini models  
-            "gemini-1.5-flash": {"provider": "gemini", "max_tokens": 8192},
-            "gemini-1.5-pro": {"provider": "gemini", "max_tokens": 8192},
-            "gemini-2.5-pro-preview": {"provider": "gemini", "max_tokens": 8192},
+            # Gemini models (API-based)
+            "gemini-1.5-flash": {"provider": "gemini", "max_tokens": 8192, "type": "api"},
+            "gemini-1.5-pro": {"provider": "gemini", "max_tokens": 8192, "type": "api"},
+            "gemini-2.5-pro-preview": {"provider": "gemini", "max_tokens": 8192, "type": "api"},
+            
+            # 🔥 LOCAL OPEN SOURCE MODELS
+            # Meta Llama 3 family
+            "llama-3-8b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "llama", "size": "8B"},
+            "llama-3-70b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "llama", "size": "70B"},
+            
+            # Mistral AI family
+            "mixtral-8x22b": {"provider": "local", "max_tokens": 32768, "type": "local", "category": "mistral", "size": "MoE"},
+            "mistral-7b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "mistral", "size": "7B"},
+            "mistral-medium": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "mistral", "size": "Medium"},
+            
+            # Nous Hermes family (fine-tuned for chat/coding)
+            "nous-hermes-2-llama3": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "nous", "size": "8B"},
+            "nous-hermes-3-llama3": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "nous", "size": "8B"},
+            
+            # Community fine-tuned models
+            "openhermes": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "community", "size": "7B"},
+            "openchat": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "community", "size": "7B"},
+            "mythomax": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "community", "size": "13B"},
+            
+            # Qwen 2 (Alibaba)
+            "qwen2-7b": {"provider": "local", "max_tokens": 32768, "type": "local", "category": "qwen", "size": "7B"},
+            "qwen2-72b": {"provider": "local", "max_tokens": 32768, "type": "local", "category": "qwen", "size": "72B"},
+            
+            # Deepseek LLM (optimized for code)
+            "deepseek-coder-33b": {"provider": "local", "max_tokens": 16384, "type": "local", "category": "deepseek", "size": "33B"},
+            "deepseek-coder-1.3b": {"provider": "local", "max_tokens": 16384, "type": "local", "category": "deepseek", "size": "1.3B"},
+            "deepseek-v2": {"provider": "local", "max_tokens": 32768, "type": "local", "category": "deepseek", "size": "236B"},
+            
+            # Phi-3 (Microsoft - lightweight)
+            "phi-3-mini": {"provider": "local", "max_tokens": 4096, "type": "local", "category": "phi", "size": "3.8B"},
+            "phi-3-medium": {"provider": "local", "max_tokens": 4096, "type": "local", "category": "phi", "size": "14B"},
+            
+            # Gemma (Google - small but versatile)
+            "gemma-2b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "gemma", "size": "2B"},
+            "gemma-7b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "gemma", "size": "7B"},
+            
+            # Yi models (01.AI - Chinese, top benchmarks)
+            "yi-34b": {"provider": "local", "max_tokens": 32768, "type": "local", "category": "yi", "size": "34B"},
+            "yi-6b": {"provider": "local", "max_tokens": 4096, "type": "local", "category": "yi", "size": "6B"},
+            
+            # Code-specialized models
+            "code-llama-34b": {"provider": "local", "max_tokens": 16384, "type": "local", "category": "code", "size": "34B"},
+            "wizardcoder-15b": {"provider": "local", "max_tokens": 16384, "type": "local", "category": "code", "size": "15B"},
+            "codefuse-13b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "code", "size": "13B"},
+            
+            # Solar and community models
+            "solar-10.7b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "solar", "size": "10.7B"},
+            "dolphin-mixtral": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "community", "size": "8x7B"},
+            "starling-7b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "community", "size": "7B"},
+            "zephyr-7b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "community", "size": "7B"},
         }
         
         # If no specific model provided, use defaults
