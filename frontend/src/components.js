@@ -194,7 +194,8 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
       const response = await axios.post(`${API_URL}/api/generate-website`, {
         prompt,
         website_type: websiteType,
-        provider
+        provider,
+        model: model || undefined  // Send model if selected
       });
 
       if (response.data.success) {
