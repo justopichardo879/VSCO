@@ -280,13 +280,24 @@ async def enhance_project(request: dict):
     """Enhance a project using AI suggestions"""
     try:
         project_id = request.get("project_id")
-        current_content = request.get("current_content")
+        current_content = request.get("current_content", "")
         enhancement_type = request.get("enhancement_type", "suggestions")
         modification_type = request.get("modification_type")
         enhancement = request.get("enhancement")
         apply_enhancement = request.get("apply", False)
 
+        # Validation
+        if not project_id:
+            return {"success": False, "error": "project_id is required"}
+        
+        # Ensure current_content is a string
+        if current_content is None:
+            current_content = ""
+        elif not isinstance(current_content, str):
+            current_content = str(current_content)
+
         logger.info(f"Enhancing project {project_id} with type: {enhancement_type}, modification: {modification_type}, apply: {apply_enhancement}")
+        logger.info(f"Content length: {len(current_content)}")
 
         # Priority: If apply_enhancement is True, apply the enhancement regardless of enhancement_type
         if apply_enhancement and enhancement:
