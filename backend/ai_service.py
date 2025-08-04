@@ -72,7 +72,7 @@ Always generate complete, production-ready code that looks professional and mode
             chat = LlmChat(
                 api_key=self.openai_key,
                 session_id=session_id,
-                system_message=system_message
+                system_message=self.system_prompt
             ).with_model("openai", model).with_max_tokens(max_tokens)
             
         elif actual_provider == "gemini":
@@ -81,7 +81,7 @@ Always generate complete, production-ready code that looks professional and mode
             chat = LlmChat(
                 api_key=self.gemini_key,
                 session_id=session_id,
-                system_message=system_message
+                system_message=self.system_prompt
             ).with_model("gemini", model).with_max_tokens(max_tokens)
             
         else:
