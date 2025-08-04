@@ -89,15 +89,15 @@ Always generate complete, production-ready code that looks professional and mode
             
         return chat
 
-    async def generate_website(self, prompt: str, provider: str, website_type: str = "landing") -> Dict[str, Any]:
-        """Generate a complete website using the specified AI provider"""
+    async def generate_website(self, prompt: str, provider: str, website_type: str = "landing", model: str = None) -> Dict[str, Any]:
+        """Generate a complete website using the specified AI provider and model"""
         session_id = str(uuid.uuid4())
         
         try:
             # Create specialized prompts based on website type
             enhanced_prompt = self._enhance_prompt(prompt, website_type)
             
-            chat = await self.create_chat_instance(provider, session_id)
+            chat = await self.create_chat_instance(provider, session_id, model)
             
             user_message = UserMessage(text=enhanced_prompt)
             
@@ -108,18 +108,20 @@ Always generate complete, production-ready code that looks professional and mode
                     timeout=120  # 2 minutes timeout
                 )
             except asyncio.TimeoutError:
-                logger.error(f"Timeout waiting for {provider} response after 120 seconds")
+                logger.error(f"Timeout waiting for {model or provider} response after 120 seconds")
                 return {
                     "success": False,
-                    "error": f"Timeout: {provider} took too long to respond. Please try again.",
-                    "provider": provider
+                    "error": f"Timeout: {model or provider} took too long to respond. Please try again.",
+                    "provider": provider,
+                    "model": model
                 }
             except Exception as api_error:
-                logger.error(f"API error from {provider}: {str(api_error)}")
+                logger.error(f"API error from {model or provider}: {str(api_error)}")
                 return {
                     "success": False,
                     "error": f"API Error: {str(api_error)}",
-                    "provider": provider
+                    "provider": provider,
+                    "model": model
                 }
             
             # Parse the response and extract code
@@ -128,6 +130,7 @@ Always generate complete, production-ready code that looks professional and mode
             return {
                 "success": True,
                 "provider": provider,
+                "model": model or ("gpt-3.5-turbo" if provider == "openai" else "gemini-1.5-pro"),
                 "website_type": website_type,
                 "session_id": session_id,
                 "files": parsed_result["files"],
