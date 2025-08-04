@@ -104,9 +104,11 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
   const [prompt, setPrompt] = useState('');
   const [websiteType, setWebsiteType] = useState('landing');
   const [provider, setProvider] = useState('openai');
+  const [model, setModel] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [websiteTypes, setWebsiteTypes] = useState([]);
   const [providers, setProviders] = useState([]);
+  const [availableModels, setAvailableModels] = useState([]);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState('');
 
