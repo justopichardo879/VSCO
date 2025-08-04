@@ -62,7 +62,7 @@ logger = logging.getLogger(__name__)
 async def generate_website(request: WebsiteGenerationRequest):
     """Generate a professional website using AI"""
     try:
-        logger.info(f"Generating website with {request.provider or 'comparison'} for: {request.prompt}")
+        logger.info(f"Generating website with {request.model or request.provider or 'comparison'} for: {request.prompt}")
         
         if request.provider:
             # Single provider generation with timeout
@@ -71,12 +71,13 @@ async def generate_website(request: WebsiteGenerationRequest):
                     ai_service.generate_website(
                         request.prompt, 
                         request.provider, 
-                        request.website_type
+                        request.website_type,
+                        request.model
                     ),
                     timeout=150  # 2.5 minutes total timeout
                 )
             except asyncio.TimeoutError:
-                logger.error(f"Server timeout for {request.provider} generation after 150 seconds")
+                logger.error(f"Server timeout for {request.model or request.provider} generation after 150 seconds")
                 return WebsiteResponse(
                     success=False,
                     error="Generation timeout: Please try again with a simpler request.",
