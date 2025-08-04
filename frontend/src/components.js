@@ -115,7 +115,36 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
   useEffect(() => {
     fetchWebsiteTypes();
     fetchProviders();
+    updateAvailableModels(provider);
   }, []);
+
+  useEffect(() => {
+    updateAvailableModels(provider);
+  }, [provider]);
+
+  const updateAvailableModels = (selectedProvider) => {
+    const modelConfigs = {
+      openai: [
+        { value: 'gpt-3.5-turbo', label: '🚀 GPT-3.5 Turbo (Rápido)', description: 'Ideal para la mayoría de casos, rápido y económico' },
+        { value: 'gpt-4.1', label: '🧠 GPT-4.1 (Avanzado)', description: 'Máxima calidad y precisión para proyectos complejos' },
+        { value: 'gpt-4o', label: '⚡ GPT-4o (Optimizado)', description: 'Última versión optimizada con mejor rendimiento' }
+      ],
+      gemini: [
+        { value: 'gemini-1.5-flash', label: '⚡ Gemini 1.5 Flash (Rápido)', description: 'Velocidad extrema manteniendo calidad' },
+        { value: 'gemini-1.5-pro', label: '💎 Gemini 1.5 Pro (Profesional)', description: 'Equilibrio perfecto entre velocidad y precisión' },
+        { value: 'gemini-2.5-pro-preview', label: '🔥 Gemini 2.5 Pro Preview (Última)', description: 'Lo último en IA de Google con capacidades avanzadas' }
+      ]
+    };
+
+    const models = modelConfigs[selectedProvider] || [];
+    setAvailableModels(models);
+    
+    // Set default model for each provider
+    if (models.length > 0) {
+      const defaultModel = selectedProvider === 'openai' ? 'gpt-3.5-turbo' : 'gemini-1.5-pro';
+      setModel(defaultModel);
+    }
+  };
 
   const fetchWebsiteTypes = async () => {
     try {
