@@ -59,7 +59,7 @@ Always generate complete, production-ready code that looks professional and mode
                 api_key=self.gemini_key,
                 session_id=session_id,
                 system_message=system_message
-            ).with_model("gemini", "gemini-1.5-pro").with_max_tokens(8192)
+            ).with_model("gemini", "gemini-1.5-flash-002").with_max_tokens(8192)
             
         else:
             raise ValueError(f"Unsupported provider: {provider}")
