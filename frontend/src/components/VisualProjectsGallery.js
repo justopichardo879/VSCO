@@ -638,7 +638,7 @@ Esta acción NO se puede deshacer.`;
     return colors;
   };
 
-  // Chat functionality
+  // Chat functionality - FIXED VERSION
   const sendChatMessage = async () => {
     if (!chatInput.trim() || !livePreview) return;
 
@@ -649,86 +649,126 @@ Esta acción NO se puede deshacer.`;
       timestamp: new Date().toISOString()
     };
 
-    // Add user message
+    // Add user message to chat
     setChatMessages(prev => [...prev, userMessage]);
     const currentInput = chatInput;
     setChatInput('');
     setIsChatLoading(true);
 
-    // Scroll to bottom
-    setTimeout(() => {
-      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-
     try {
-      const response = await axios.post(`${API_URL}/api/enhance-project`, {
+      console.log('Sending chat message to backend:', {
         project_id: livePreview.id,
-        enhancement: {
-          title: 'Chat Modification',
-          description: currentInput,
-          type: 'chat',
-          impact: 'high',
-          icon: '💬',
-          prompt: currentInput
-        },
-        apply: true,
-        current_content: getProjectHTML(livePreview),
+        message: currentInput,
         modification_type: 'chat_interactive'
       });
 
-      let aiMessage = {
-        id: Date.now() + 1,
-        type: 'ai',
-        timestamp: new Date().toISOString()
-      };
+      // Send to backend with proper format
+      const response = await axios.post(`${API_URL}/api/enhance-project`, {
+        project_id: livePreview.id,
+        current_content: getProjectHTML(livePreview),
+        enhancement_type: 'chat_interactive', 
+        modification_type: 'chat_interactive',
+        enhancement: {
+          title: `Chat: ${currentInput.substring(0, 50)}...`,
+          prompt: currentInput,
+          impact: 'high',
+          type: 'chat_interactive'
+        },
+        apply: true
+      });
 
-      if (response.data.success) {
-        // Update projects list
-        await fetchProjects();
-        
-        // Update live preview
+      console.log('Chat backend response:', response.data);
+
+      if (response.data.success && response.data.enhanced_project) {
+        // Create AI response message
+        const aiResponse = {
+          id: Date.now() + 1,
+          type: 'ai',
+          message: `✨ ¡Perfecto! He aplicado los cambios que me pediste: "${currentInput}". Los cambios ya están visibles en el preview.`,
+          timestamp: new Date().toISOString(),
+          suggestions: generateNextSuggestions(currentInput),
+          changes_applied: response.data.changes || []
+        };
+
+        setChatMessages(prev => [...prev, aiResponse]);
+
+        // Update live preview with enhanced version
         const enhancedProject = {
           ...livePreview,
           files: response.data.enhanced_project.files,
           metadata: {
             ...livePreview.metadata,
             ...response.data.enhanced_project.metadata,
+            enhanced: true,
             last_chat_modification: currentInput,
-            modified_at: new Date().toISOString()
+            enhanced_at: new Date().toISOString()
           }
         };
-        
+
         setLivePreview(enhancedProject);
         setPreviewKey(prev => prev + 1);
+        
+        // Update projects list
+        await fetchProjects();
+        
+        // Show success notification
+        showNotification(`✨ ¡Cambios aplicados via Chat IA!`, 'success');
+        
+        // Generate new suggestions based on enhanced content
+        setTimeout(() => {
+          generateEnhancementSuggestions(enhancedProject);
+        }, 1000);
 
-        // AI explains what it did
-        aiMessage.message = `✅ **¡Perfecto! He aplicado los cambios solicitados.**\n\n**Modificaciones realizadas:**\n${generateModificationSummary(currentInput, response.data)}\n\n¿Te gusta cómo quedó? Puedes pedirme más cambios o mejoras adicionales.`;
-        aiMessage.status = 'success';
-        aiMessage.suggestions = generateNextSuggestions(currentInput);
-
-        showNotification('✅ ¡Modificación aplicada exitosamente!', 'success');
       } else {
-        aiMessage.message = `❌ **Lo siento, hubo un problema aplicando los cambios.**\n\nError: ${response.data.error}\n\n¿Podrías intentar reformular tu solicitud de manera más específica?`;
-        aiMessage.status = 'error';
+        // Handle API error response
+        const errorMsg = response.data.error || 'No se pudo procesar tu solicitud';
+        const errorResponse = {
+          id: Date.now() + 1,
+          type: 'ai',
+          message: `❌ Lo siento, hubo un problema procesando tu solicitud: "${errorMsg}". ¿Podrías intentar reformular tu pregunta?`,
+          timestamp: new Date().toISOString(),
+          suggestions: ['🔄 Intenta de nuevo', '💬 Reformula la pregunta', '🎯 Sé más específico']
+        };
+        setChatMessages(prev => [...prev, errorResponse]);
+        showNotification(`❌ Error en Chat IA: ${errorMsg}`, 'error');
       }
 
-      setChatMessages(prev => [...prev, aiMessage]);
-      
     } catch (error) {
-      console.error('Error in chat modification:', error);
+      console.error('Error in chat message:', error);
       
-      const errorMessage = {
+      // Create error response message
+      let errorMessage = '❌ Error de conexión. ';
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 403) {
+          errorMessage += 'No tienes permisos para esta acción.';
+        } else if (status === 429) {
+          errorMessage += 'Demasiadas solicitudes. Espera un momento.';
+        } else if (status === 500) {
+          errorMessage += 'Error del servidor. Verifica las API keys.';
+        } else {
+          errorMessage += `Error ${status}: ${error.response.data?.detail || 'Error desconocido'}`;
+        }
+      } else if (error.request) {
+        errorMessage += 'No se pudo conectar al servidor.';
+      } else {
+        errorMessage += 'Error inesperado.';
+      }
+
+      const errorResponse = {
         id: Date.now() + 1,
         type: 'ai',
-        message: `❌ **Error aplicando la modificación.**\n\nHubo un problema procesando tu solicitud. Por favor intenta con una instrucción más específica.\n\n**Ejemplo:** "Agrega una sección de testimonios con 3 reseñas"`,
+        message: errorMessage + ' ¿Puedes intentar nuevamente?',
         timestamp: new Date().toISOString(),
-        status: 'error'
+        suggestions: ['🔄 Reintentar', '🛠️ Verificar conexión', '💡 Probar sugerencias automáticas']
       };
-      
-      setChatMessages(prev => [...prev, errorMessage]);
-      showNotification('❌ Error en el chat. Intenta nuevamente.', 'error');
+
+      setChatMessages(prev => [...prev, errorResponse]);
+      showNotification('❌ Error en Chat IA', 'error');
     } finally {
       setIsChatLoading(false);
+      
+      // Scroll to bottom after message
       setTimeout(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
