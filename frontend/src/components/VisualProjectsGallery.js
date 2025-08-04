@@ -1515,8 +1515,13 @@ Esta acción NO se puede deshacer.`;
                 </button>
                 
                 <button 
+                  type="button"
                   className="manual-btn"
-                  onClick={() => applyManualEnhancement(livePreview, 'text')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyManualEnhancement(livePreview, 'text');
+                  }}
                   disabled={enhancing}
                 >
                   <span className="manual-icon">📝</span>
@@ -1528,8 +1533,13 @@ Esta acción NO se puede deshacer.`;
                 </button>
                 
                 <button 
+                  type="button"
                   className="manual-btn"
-                  onClick={() => applyManualEnhancement(livePreview, 'images')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyManualEnhancement(livePreview, 'images');
+                  }}
                   disabled={enhancing}
                 >
                   <span className="manual-icon">🖼️</span>
@@ -1541,8 +1551,13 @@ Esta acción NO se puede deshacer.`;
                 </button>
                 
                 <button 
+                  type="button"
                   className="manual-btn"
-                  onClick={() => applyManualEnhancement(livePreview, 'config')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyManualEnhancement(livePreview, 'config');
+                  }}
                   disabled={enhancing}
                 >
                   <span className="manual-icon">⚙️</span>
