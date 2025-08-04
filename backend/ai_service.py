@@ -50,7 +50,7 @@ Always generate complete, production-ready code that looks professional and mode
                 api_key=self.openai_key,
                 session_id=session_id,
                 system_message=system_message
-            ).with_model("openai", "gpt-4.1").with_max_tokens(8192)
+            ).with_model("openai", "gpt-3.5-turbo").with_max_tokens(8192)
             
         elif provider == "gemini":
             if not self.gemini_key:
