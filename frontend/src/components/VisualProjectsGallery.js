@@ -70,7 +70,7 @@ export const VisualProjectsGallery = ({ projects: propProjects = [], onBack }) =
     const confirmMessage = `⚠️ ¿Eliminar proyecto?
 
 📝 Nombre: "${project.name || 'Proyecto sin nombre'}"
-🤖 Generado con: ${project.metadata?.provider === 'openai' ? 'OpenAI' : 'Google Gemini'}
+🤖 Generado con: ${project.metadata?.provider === 'openai' ? 'OpenAI GPT-3.5' : 'Google Gemini 1.5'}
 📅 Creado: ${project.created_at ? new Date(project.created_at).toLocaleDateString() : 'Fecha desconocida'}
 
 Esta acción NO se puede deshacer.`;
