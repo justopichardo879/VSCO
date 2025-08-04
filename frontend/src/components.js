@@ -133,6 +133,38 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
         { value: 'gemini-1.5-flash', label: '⚡ Gemini 1.5 Flash (Rápido)', description: 'Velocidad extrema manteniendo calidad' },
         { value: 'gemini-1.5-pro', label: '💎 Gemini 1.5 Pro (Profesional)', description: 'Equilibrio perfecto entre velocidad y precisión' },
         { value: 'gemini-2.5-pro-preview', label: '🔥 Gemini 2.5 Pro Preview (Última)', description: 'Lo último en IA de Google con capacidades avanzadas' }
+      ],
+      local: [
+        // 🔥 META LLAMA 3 FAMILY
+        { value: 'llama-3-8b', label: '🦙 Llama 3 8B (Equilibrado)', description: 'Meta AI - Excelente balance rendimiento/calidad, ideal para empezar' },
+        { value: 'llama-3-70b', label: '🦙 Llama 3 70B (Potente)', description: 'Meta AI - Máximo rendimiento para tareas complejas' },
+        
+        // 🔥 MISTRAL AI FAMILY  
+        { value: 'mixtral-8x22b', label: '🌀 Mixtral 8x22B (MoE)', description: 'Mistral AI - Mixture of Experts, súper velocidad' },
+        { value: 'mistral-7b', label: '🌀 Mistral 7B (Rápido)', description: 'Mistral AI - Velocidad extrema, contextos largos' },
+        
+        // 🔥 QWEN 2 (ALIBABA)
+        { value: 'qwen2-7b', label: '🏮 Qwen2 7B (Versátil)', description: 'Alibaba - Gran rendimiento general, multi-idioma' },
+        { value: 'qwen2-72b', label: '🏮 Qwen2 72B (Premium)', description: 'Alibaba - Top benchmarks, contextos ultra largos' },
+        
+        // 🔥 CODING SPECIALISTS
+        { value: 'deepseek-coder-33b', label: '💻 DeepSeek Coder 33B', description: 'Especialista en código, autocompletar y copiloto offline' },
+        { value: 'code-llama-34b', label: '💻 Code Llama 34B', description: 'Meta AI - Generación de código y programación' },
+        { value: 'wizardcoder-15b', label: '💻 WizardCoder 15B', description: 'Especialista en coding, fine-tuned para programación' },
+        
+        // 🔥 LIGHTWEIGHT MODELS
+        { value: 'phi-3-mini', label: '📱 Phi-3 Mini (Ligero)', description: 'Microsoft - Corre en laptop con 8GB RAM, calidad decente' },
+        { value: 'gemma-7b', label: '💎 Gemma 7B (Versátil)', description: 'Google - Modelo pequeño pero potente, ideal para edge' },
+        { value: 'yi-6b', label: '🇨🇳 Yi 6B (Eficiente)', description: '01.AI - Top en benchmarks, soporte multi-idioma' },
+        
+        // 🔥 COMMUNITY FINE-TUNED
+        { value: 'nous-hermes-2-llama3', label: '🧙 Nous Hermes 2 (Chat)', description: 'Fine-tuned para chat y coding, super asistente' },
+        { value: 'openhermes', label: '🧙 OpenHermes (Creativo)', description: 'Comunidad - Personalidad y creatividad mejoradas' },
+        { value: 'dolphin-mixtral', label: '🐬 Dolphin Mixtral (QA)', description: 'Fine-tuned para preguntas y respuestas avanzadas' },
+        
+        // 🔥 BALANCED PERFORMANCE
+        { value: 'solar-10.7b', label: '☀️ Solar 10.7B (Equilibrio)', description: 'Perfecto balance entre velocidad y calidad' },
+        { value: 'starling-7b', label: '⭐ Starling 7B (Chat)', description: 'Optimizado para conversación y asistencia' }
       ]
     };
 
@@ -141,8 +173,13 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
     
     // Set default model for each provider
     if (models.length > 0) {
-      const defaultModel = selectedProvider === 'openai' ? 'gpt-3.5-turbo' : 'gemini-1.5-pro';
-      setModel(defaultModel);
+      if (selectedProvider === 'openai') {
+        setModel('gpt-3.5-turbo');
+      } else if (selectedProvider === 'gemini') {
+        setModel('gemini-1.5-pro');  
+      } else if (selectedProvider === 'local') {
+        setModel('llama-3-8b'); // Most reliable local model as default
+      }
     }
   };
 
