@@ -351,7 +351,7 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
                 ))}
               </select>
               {availableModels.find(m => m.value === model) && (
-                <div className="model-description">
+                <div className={`model-description ${provider === 'local' ? 'local-model' : 'api-model'}`}>
                   {availableModels.find(m => m.value === model).description}
                 </div>
               )}
