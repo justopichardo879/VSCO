@@ -1452,8 +1452,13 @@ Esta acción NO se puede deshacer.`;
                   
                   <div className="chat-quick-actions">
                     <button 
+                      type="button"
                       className="quick-action-chip"
-                      onClick={() => setChatInput('Agrega una sección de testimonios con 3 reseñas')}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setChatInput('Agrega una sección de testimonios con 3 reseñas');
+                      }}
                       disabled={isChatLoading}
                     >
                       💬 Testimonios
