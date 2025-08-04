@@ -39,7 +39,6 @@ Always generate complete, production-ready code that looks professional and mode
         
     async def create_chat_instance(self, provider: str, session_id: str, model: str = None):
         """Create a chat instance based on the provider and specific model"""
-        system_message = SystemMessage(text=self.system_prompt)
 
         # Model configurations with their token limits
         model_configs = {
