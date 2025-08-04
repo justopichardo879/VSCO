@@ -15,6 +15,7 @@ class WebsiteGenerationRequest(BaseModel):
     prompt: str = Field(..., description="User prompt for website generation")
     website_type: str = Field(default="landing", description="Type of website (landing, business, portfolio, ecommerce, blog)")
     provider: Optional[str] = Field(default=None, description="AI provider (openai, gemini, or null for comparison)")
+    model: Optional[str] = Field(default=None, description="Specific AI model (gpt-3.5-turbo, gpt-4.1, gpt-4o, gemini-1.5-flash, gemini-1.5-pro, gemini-2.5-pro-preview)")
     
 class WebsiteFile(BaseModel):
     filename: str
