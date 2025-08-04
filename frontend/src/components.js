@@ -195,9 +195,29 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
   const fetchProviders = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/ai-providers`);
-      setProviders(response.data.providers);
+      const apiProviders = response.data.providers;
+      
+      // Add local open source provider
+      const localProvider = {
+        id: 'local',
+        name: '🔥 Local Open Source',
+        icon: '🏠',
+        description: 'Modelos locales sin API externa (Ollama, LM Studio)'
+      };
+      
+      // Combine API providers with local provider
+      const allProviders = [...apiProviders, localProvider];
+      setProviders(allProviders);
+      
     } catch (error) {
       console.error('Error al obtener proveedores:', error);
+      
+      // Fallback: Set providers manually if API fails
+      setProviders([
+        { id: 'openai', name: '🤖 OpenAI', icon: '🤖', description: 'GPT models via API' },
+        { id: 'gemini', name: '💎 Google Gemini', icon: '💎', description: 'Gemini models via API' },
+        { id: 'local', name: '🔥 Local Open Source', icon: '🏠', description: 'Modelos locales sin API externa' }
+      ]);
     }
   };
 
