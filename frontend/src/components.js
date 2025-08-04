@@ -103,7 +103,7 @@ export const HeroSection = () => {
 export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
   const [prompt, setPrompt] = useState('');
   const [websiteType, setWebsiteType] = useState('landing');
-  const [provider, setProvider] = useState('gemini');
+  const [provider, setProvider] = useState('openai');
   const [isGenerating, setIsGenerating] = useState(false);
   const [websiteTypes, setWebsiteTypes] = useState([]);
   const [providers, setProviders] = useState([]);
