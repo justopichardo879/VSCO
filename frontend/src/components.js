@@ -277,6 +277,28 @@ export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
                 ))}
               </select>
             </div>
+
+            <div className="form-group">
+              <label htmlFor="model">Modelo de IA</label>
+              <select
+                id="model"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="form-control"
+                disabled={isGenerating}
+              >
+                {availableModels.map(modelConfig => (
+                  <option key={modelConfig.value} value={modelConfig.value}>
+                    {modelConfig.label}
+                  </option>
+                ))}
+              </select>
+              {availableModels.find(m => m.value === model) && (
+                <div className="model-description">
+                  {availableModels.find(m => m.value === model).description}
+                </div>
+              )}
+            </div>
           </div>
 
           <button 
