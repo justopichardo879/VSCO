@@ -1345,8 +1345,13 @@ Esta acción NO se puede deshacer.`;
                       </div>
                       <p className="suggestion-description">{suggestion.description}</p>
                       <button 
+                        type="button"
                         className="apply-btn"
-                        onClick={() => applyEnhancement(livePreview, suggestion)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          applyEnhancement(livePreview, suggestion);
+                        }}
                         disabled={enhancing}
                       >
                         {enhancing ? 'Aplicando...' : 'Aplicar Mejora'}
