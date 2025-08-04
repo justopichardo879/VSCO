@@ -1028,7 +1028,7 @@ Esta acción NO se puede deshacer.`;
             <div className="meta-item">
               <span className="meta-label">IA</span>
               <span className="meta-value">
-                {project.metadata?.provider === 'openai' ? 'OpenAI' : 'Gemini'}
+                {project.metadata?.provider === 'openai' ? 'OpenAI 3.5' : 'Gemini 1.5'}
               </span>
             </div>
           </div>
