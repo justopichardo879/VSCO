@@ -1464,15 +1464,25 @@ Esta acción NO se puede deshacer.`;
                       💬 Testimonios
                     </button>
                     <button 
+                      type="button"
                       className="quick-action-chip"
-                      onClick={() => setChatInput('Agrega un formulario de contacto')}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setChatInput('Agrega un formulario de contacto');
+                      }}
                       disabled={isChatLoading}
                     >
                       📧 Contacto
                     </button>
                     <button 
+                      type="button"
                       className="quick-action-chip"
-                      onClick={() => setChatInput('Cambia la paleta de colores a tonos más modernos')}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setChatInput('Cambia la paleta de colores a tonos más modernos');
+                      }}
                       disabled={isChatLoading}
                     >
                       🎨 Colores
