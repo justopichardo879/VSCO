@@ -600,56 +600,63 @@ IMPORTANTE: La modificación debe ser sustancial, visible y profesional. Si el u
 def create_chat_modification_prompt(enhancement: dict, current_content: str):
     """Create a chat-style interactive modification prompt"""
     
-    user_message = enhancement.get('message') or enhancement.get('description', '')
+    user_message = enhancement.get('prompt') or enhancement.get('message') or enhancement.get('description', '')
     
     chat_prompt = f"""
-CONVERSACIÓN INTERACTIVA CON EL USUARIO:
-Usuario: "{user_message}"
+CHAT INTERACTIVO - MODIFICACIÓN DE SITIO WEB
+Usuario dice: "{user_message}"
 
 CONTENIDO ACTUAL DEL SITIO WEB:
 {current_content[:4000]}
 
-INSTRUCCIONES PARA RESPUESTA CONVERSACIONAL:
-1. COMPRENSIÓN: Interpreta la solicitud del usuario como si fuera una conversación natural
-2. IMPLEMENTACIÓN: Aplica los cambios solicitados de manera intuitiva y profesional
-3. MEJORAS ADICIONALES: Si es apropiado, sugiere mejoras relacionadas que beneficien al sitio
-4. COMUNICACIÓN: Responde de manera amigable y profesional
+INSTRUCCIONES PARA IA CONVERSACIONAL:
+1. INTERPRETACIÓN NATURAL: Comprende la solicitud como una conversación casual pero profesional
+2. IMPLEMENTACIÓN INTELIGENTE: Aplica los cambios solicitados con criterio profesional
+3. MEJORAS CONTEXTUALES: Agrega mejoras relacionadas que complementen la solicitud
+4. RESPUESTA DETALLADA: Será claro qué cambios se aplicaron
 
-TIPOS DE SOLICITUDES CONVERSACIONALES:
-- "Hazlo más moderno" → Aplicar diseño contemporáneo
-- "Agrega más color" → Mejorar paleta de colores
-- "Necesito un formulario de contacto" → Agregar formulario funcional
-- "Mejora la navegación" → Optimizar menú y estructura
-- "Hazlo más profesional" → Aplicar estilo corporativo
+EJEMPLOS DE INTERPRETACIÓN:
+- "Agrega testimonios" → Crear sección de testimonios con 3-4 reseñas realistas
+- "Hazlo más moderno" → Aplicar diseño contemporáneo, colores actuales, tipografía moderna
+- "Mejora los colores" → Actualizar paleta completa con colores más atractivos
+- "Agrega contacto" → Incluir formulario de contacto funcional y información
+- "Más profesional" → Refinar diseño, mejorar tipografía, optimizar espacios
+- "Agrega animaciones" → Incluir transiciones CSS suaves y micro-interacciones
 
-PAUTAS DE RESPUESTA CONVERSACIONAL:
-✓ Interpreta la intención detrás de las palabras del usuario
-✓ Aplica las mejores prácticas de diseño web
-✓ Mantén la funcionalidad existente
-✓ Mejora la experiencia de usuario
-✓ Usa tecnologías web modernas (HTML5, CSS3, JavaScript ES6+)
-✓ Asegura responsividad y accesibilidad
-✓ Optimiza para performance
+DIRECTRICES DE IMPLEMENTACIÓN:
+✅ VISUAL: Colores modernos, tipografía legible, espaciado apropiado
+✅ CONTENIDO: Textos persuasivos, llamadas a la acción claras
+✅ ESTRUCTURA: HTML semántico, CSS organizado, JavaScript funcional
+✅ EXPERIENCIA: Responsive, accesible, rápido de cargar
+✅ PROFESIONAL: Diseño cohesivo, elementos bien alineados
 
-ESTILO DE IMPLEMENTACIÓN:
-- Si el usuario pide algo "más moderno": usa gradientes, sombras sutiles, tipografía moderna
-- Si pide "más profesional": usa colores corporativos, espaciado generoso, tipografía limpia
-- Si pide "más colorido": introduce una paleta vibrante pero equilibrada
-- Si pide funcionalidad: implementa con las mejores prácticas UX/UI
+REGLAS ESPECÍFICAS:
+- Si pide "testimonios": Crear 3-4 testimonios con nombres, fotos placeholder y reseñas convincentes
+- Si pide "contacto": Incluir formulario con nombre, email, mensaje y validación básica
+- Si pide "colores": Aplicar paleta moderna con al menos 3-4 colores coordinados
+- Si pide "moderno": Usar tendencias actuales (gradientes sutiles, sombras, rounded corners)
+- Si pide "responsive": Optimizar para mobile con breakpoints apropiados
+
+CALIDAD MÍNIMA REQUERIDA:
+- Código limpio y bien estructurado
+- Diseño visualmente atractivo
+- Funcionalidad real (no placeholder)
+- Integración perfecta con contenido existente
+- Mejoras sustanciales y visibles
 
 FORMATO DE RESPUESTA OBLIGATORIO:
 === FILE: index.html ===
-[HTML completo con las modificaciones conversacionales aplicadas]
+[HTML completo mejorado con los cambios solicitados aplicados]
 
 === FILE: styles.css ===
-[CSS completo con estilos mejorados según la conversación]
+[CSS completo con nuevos estilos y mejoras visuales]
 
 === FILE: script.js ===
 [JavaScript con funcionalidades nuevas o mejoradas si es necesario]
 
 === END FILES ===
 
-IMPORTANTE: Responde a la intención del usuario, no solo a las palabras literales. Aplica tu conocimiento de diseño web para crear la mejor experiencia posible.
+IMPORTANTE: Los cambios deben ser significativos, visibles y profesionales. Interpreta la intención del usuario y superla con una implementación de alta calidad.
 """
     
     return chat_prompt
