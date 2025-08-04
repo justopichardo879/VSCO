@@ -1,4 +1,4 @@
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+from emergentintegrations.llm.chat import LlmChat, UserMessage, SystemMessage
 import os
 import asyncio
 import json
