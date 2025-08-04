@@ -405,14 +405,21 @@ async def generate_smart_suggestions(content: str):
     """Generate intelligent enhancement suggestions based on content analysis"""
     suggestions = []
     
-    # Analyze the content to provide contextual suggestions
-    has_forms = 'form' in content.lower() or 'input' in content.lower()
-    has_images = 'img' in content.lower() or 'image' in content.lower()
-    has_navigation = 'nav' in content.lower() or 'menu' in content.lower()
-    has_footer = 'footer' in content.lower()
-    has_animations = 'animation' in content.lower() or 'transition' in content.lower()
+    # Handle empty or None content
+    if not content or content is None:
+        content = ""
     
-    # Color enhancement
+    # Ensure content is string
+    content_str = str(content).lower()
+    
+    # Analyze the content to provide contextual suggestions
+    has_forms = 'form' in content_str or 'input' in content_str
+    has_images = 'img' in content_str or 'image' in content_str
+    has_navigation = 'nav' in content_str or 'menu' in content_str
+    has_footer = 'footer' in content_str
+    has_animations = 'animation' in content_str or 'transition' in content_str
+    
+    # Color enhancement - always suggest
     suggestions.append({
         "type": "visual",
         "title": "Mejorar Paleta de Colores",
@@ -430,6 +437,43 @@ async def generate_smart_suggestions(content: str):
             "impact": "medium",
             "icon": "✨"
         })
+    else:
+        suggestions.append({
+            "type": "functionality", 
+            "title": "Optimizar Animaciones Existentes",
+            "description": "Mejorar las animaciones actuales con efectos más suaves y profesionales",
+            "impact": "medium",
+            "icon": "⚡"
+        })
+    
+    # Content optimization - always suggest
+    suggestions.append({
+        "type": "content",
+        "title": "Optimizar Contenido",
+        "description": "Mejorar los textos, títulos y llamadas a la acción para mayor efectividad y conversión",
+        "impact": "high",
+        "icon": "📝"
+    })
+    
+    # Responsive enhancement - always suggest
+    suggestions.append({
+        "type": "responsive",
+        "title": "Mejorar Responsive Design",
+        "description": "Optimizar el diseño para dispositivos móviles y tablets con mejores breakpoints",
+        "impact": "high",
+        "icon": "📱"
+    })
+    
+    # SEO enhancement - always suggest
+    suggestions.append({
+        "type": "seo",
+        "title": "Optimización SEO",
+        "description": "Incluir meta tags, structured data y optimizaciones para motores de búsqueda",
+        "impact": "medium",
+        "icon": "🔍"
+    })
+    
+    return suggestions
     
     # Content optimization
     suggestions.append({
