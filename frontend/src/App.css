@@ -1058,3 +1058,41 @@ textarea.form-control {
 .mt-md { margin-top: var(--spacing-md); }
 .mt-lg { margin-top: var(--spacing-lg); }
 .mt-xl { margin-top: var(--spacing-xl); }
+
+/* =====================================
+   MODEL SELECTOR STYLES
+   ===================================== */
+
+.model-description {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: linear-gradient(135deg, 
+    rgba(37, 99, 235, 0.05) 0%, 
+    rgba(124, 58, 237, 0.05) 100%
+  );
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  line-height: 1.5;
+  font-style: italic;
+  position: relative;
+}
+
+.model-description::before {
+  content: "💡";
+  margin-right: var(--spacing-sm);
+}
+
+.model-description:empty {
+  display: none;
+}
+
+/* Enhanced form styling for model selector */
+.form-group select:focus + .model-description {
+  border-color: var(--primary-color);
+  background: linear-gradient(135deg, 
+    rgba(37, 99, 235, 0.08) 0%, 
+    rgba(124, 58, 237, 0.08) 100%
+  );
+}
