@@ -348,9 +348,89 @@ class LocalResponse:
         self.text = content
 
     async def generate_website(self, prompt: str, provider: str, website_type: str = "landing", model: str = None) -> Dict[str, Any]:
-        """Generate a complete website using the specified AI provider and model"""
+        """Generate a complete website using the specified AI provider and model with automatic fallback"""
         session_id = str(uuid.uuid4())
         
+        # 🔥 AUTOMATIC FALLBACK CHAIN for local models
+        if provider == "local" and model:
+            fallback_models = self._get_fallback_models(model)
+            return await self._generate_with_fallback(prompt, provider, website_type, fallback_models, session_id)
+        
+        # Standard generation for API-based models
+        return await self._generate_single_model(prompt, provider, website_type, model, session_id)
+
+    def _get_fallback_models(self, primary_model: str) -> list:
+        """Get fallback model chain based on primary model category"""
+        
+        fallback_chains = {
+            # Coding-focused models
+            "deepseek-coder-33b": ["deepseek-coder-1.3b", "code-llama-34b", "wizardcoder-15b", "llama-3-8b"],
+            "deepseek-coder-1.3b": ["code-llama-34b", "wizardcoder-15b", "deepseek-coder-33b", "llama-3-8b"],
+            "code-llama-34b": ["wizardcoder-15b", "deepseek-coder-1.3b", "codefuse-13b", "llama-3-8b"],
+            "wizardcoder-15b": ["code-llama-34b", "deepseek-coder-1.3b", "codefuse-13b", "llama-3-8b"],
+            
+            # Large general models  
+            "llama-3-70b": ["llama-3-8b", "mixtral-8x22b", "qwen2-72b", "yi-34b"],
+            "mixtral-8x22b": ["mistral-7b", "llama-3-8b", "qwen2-7b", "solar-10.7b"],
+            "qwen2-72b": ["qwen2-7b", "llama-3-8b", "mixtral-8x22b", "yi-6b"],
+            "yi-34b": ["yi-6b", "llama-3-8b", "qwen2-7b", "mixtral-8x22b"],
+            
+            # Medium-sized reliable models
+            "llama-3-8b": ["mistral-7b", "qwen2-7b", "gemma-7b", "solar-10.7b"],
+            "mistral-7b": ["llama-3-8b", "qwen2-7b", "openhermes", "solar-10.7b"],
+            "qwen2-7b": ["llama-3-8b", "mistral-7b", "gemma-7b", "yi-6b"],
+            
+            # Lightweight models
+            "phi-3-mini": ["phi-3-medium", "gemma-2b", "yi-6b", "llama-3-8b"],
+            "gemma-2b": ["gemma-7b", "phi-3-mini", "yi-6b", "llama-3-8b"],
+            
+            # Community fine-tuned models
+            "nous-hermes-2-llama3": ["nous-hermes-3-llama3", "openhermes", "dolphin-mixtral", "llama-3-8b"],
+            "openhermes": ["nous-hermes-2-llama3", "openchat", "starling-7b", "mistral-7b"],
+            "dolphin-mixtral": ["openhermes", "starling-7b", "zephyr-7b", "mixtral-8x22b"],
+        }
+        
+        # Get fallback chain or default to reliable models
+        fallbacks = fallback_chains.get(primary_model, ["llama-3-8b", "mistral-7b", "qwen2-7b", "gemma-7b"])
+        
+        # Always start with the requested model
+        return [primary_model] + [f for f in fallbacks if f != primary_model]
+
+    async def _generate_with_fallback(self, prompt: str, provider: str, website_type: str, fallback_models: list, session_id: str) -> Dict[str, Any]:
+        """Try multiple models in sequence until one succeeds"""
+        
+        last_error = None
+        for i, model in enumerate(fallback_models):
+            try:
+                logger.info(f"🔥 Attempting generation with local model: {model} (attempt {i+1}/{len(fallback_models)})")
+                result = await self._generate_single_model(prompt, provider, website_type, model, session_id)
+                
+                if result["success"]:
+                    logger.info(f"✅ Successfully generated with {model}")
+                    # Add fallback info to metadata
+                    result["metadata"]["fallback_used"] = i > 0
+                    result["metadata"]["attempted_models"] = fallback_models[:i+1]
+                    return result
+                else:
+                    last_error = result.get("error", "Unknown error")
+                    logger.warning(f"❌ Model {model} failed: {last_error}")
+                    
+            except Exception as e:
+                last_error = str(e)
+                logger.warning(f"❌ Model {model} exception: {last_error}")
+                continue
+        
+        # All models failed
+        return {
+            "success": False,
+            "error": f"🔥 All local models failed. Last error: {last_error}. Please check that Ollama/LM Studio is running with at least one model installed.",
+            "provider": provider,
+            "model": fallback_models[0],
+            "attempted_models": fallback_models
+        }
+
+    async def _generate_single_model(self, prompt: str, provider: str, website_type: str, model: str, session_id: str) -> Dict[str, Any]:
+        """Generate website with a single specific model"""
         try:
             # Create specialized prompts based on website type
             enhanced_prompt = self._enhance_prompt(prompt, website_type)
@@ -388,7 +468,7 @@ class LocalResponse:
             return {
                 "success": True,
                 "provider": provider,
-                "model": model or ("gpt-3.5-turbo" if provider == "openai" else "gemini-1.5-pro"),
+                "model": model or ("gpt-3.5-turbo" if provider == "openai" else "gemini-1.5-pro" if provider == "gemini" else "llama-3-8b"),
                 "website_type": website_type,
                 "session_id": session_id,
                 "files": parsed_result["files"],
