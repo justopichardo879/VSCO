@@ -337,29 +337,42 @@ async def enhance_project(request: dict):
                     provider = "gemini"
                     model = "gemini-1.5-flash"
 
-            logger.info(f"AI service result: {result.get('success', False)}")
+            logger.info(f"AI service result: {result.get('success', False)} using {provider}:{model}")
 
             if result["success"]:
                 # Update the project in database
-                await db_service.update_project(project_id, {
+                update_data = {
                     "files": result["files"],
                     "metadata": {
                         **result.get("metadata", {}),
                         "enhanced": True,
                         "enhancement_applied": enhancement.get('title', 'Unknown'),
+                        "enhancement_provider": provider,
+                        "enhancement_model": model,
                         "enhanced_at": datetime.utcnow().isoformat()
                     }
-                })
+                }
+                
+                await db_service.update_project(project_id, update_data)
 
-                logger.info(f"Project {project_id} updated successfully")
+                logger.info(f"Project {project_id} updated successfully with {provider}:{model}")
 
                 return {
                     "success": True,
                     "enhanced_project": {
                         "id": project_id,
                         "files": result["files"],
-                        "metadata": result.get("metadata", {})
-                    }
+                        "metadata": result.get("metadata", {}),
+                        "provider_used": provider,
+                        "model_used": model
+                    },
+                    "provider_used": provider,
+                    "model_used": model,
+                    "changes": [
+                        f"✅ Mejora aplicada usando {provider.upper()} {model}",
+                        f"🎯 Tipo: {enhancement.get('title', 'Mejora personalizada')}",
+                        f"⚡ Impacto: {enhancement.get('impact', 'Alto')}"
+                    ]
                 }
             else:
                 error_msg = result.get("error", "AI service failed to enhance the project")
