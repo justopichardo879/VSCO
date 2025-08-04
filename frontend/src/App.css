@@ -1096,3 +1096,72 @@ textarea.form-control {
     rgba(124, 58, 237, 0.08) 100%
   );
 }
+
+/* =====================================
+   PROVIDER-SPECIFIC STYLING
+   ===================================== */
+
+.form-group select[id="provider"] {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.form-group select[id="provider"] option[value="openai"] {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
+.form-group select[id="provider"] option[value="gemini"] {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+}
+
+.form-group select[id="provider"] option[value="local"] {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+}
+
+/* Model-specific styling */
+.form-group select[id="model"] {
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+  font-size: 0.9rem;
+}
+
+/* Local model descriptions with special styling */
+.model-description.local-model {
+  background: linear-gradient(135deg, 
+    rgba(34, 197, 94, 0.05) 0%, 
+    rgba(22, 163, 74, 0.05) 100%
+  );
+  border-left: 4px solid #10b981;
+  position: relative;
+}
+
+.model-description.local-model::before {
+  content: "🏠";
+  margin-right: var(--spacing-sm);
+}
+
+.model-description.local-model::after {
+  content: "100% OFFLINE";
+  position: absolute;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  background: #10b981;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* API model descriptions */
+.model-description.api-model {
+  background: linear-gradient(135deg, 
+    rgba(37, 99, 235, 0.05) 0%, 
+    rgba(124, 58, 237, 0.05) 100%
+  );
+  border-left: 4px solid #3b82f6;
+}
+
+.model-description.api-model::before {
+  content: "🌐";
+  margin-right: var(--spacing-sm);
+}
