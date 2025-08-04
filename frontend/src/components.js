@@ -452,7 +452,7 @@ export const ProviderComparison = ({ onWebsiteGenerated }) => {
               {Object.entries(comparisonResults.results).map(([provider, result]) => (
                 <div key={provider} className="result-card">
                   <h4>
-                    {provider === 'openai' ? '🤖 OpenAI GPT-3.5' : '💎 Google Gemini 1.5'}
+                    {provider === 'openai' ? '🤖 OpenAI GPT-3.5' : '💎 Google Gemini 1.5 Flash'}
                   </h4>
                   <div className="result-preview">
                     <iframe 
