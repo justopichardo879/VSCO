@@ -789,7 +789,7 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
               <h3>Detalles del Proyecto</h3>
               <div className="project-details">
                 <p><strong>Nombre:</strong> {selectedProject.name || 'Sitio Web Generado'}</p>
-                <p><strong>Proveedor:</strong> {selectedProject.metadata?.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : selectedProject.provider === 'openai' ? '🤖 OpenAI GPT-4.1' : '💎 Google Gemini'}</p>
+                <p><strong>Proveedor:</strong> {selectedProject.metadata?.provider === 'openai' ? '🤖 OpenAI GPT-3.5' : selectedProject.provider === 'openai' ? '🤖 OpenAI GPT-3.5' : '💎 Google Gemini 1.5'}</p>
                 <p><strong>Tipo:</strong> {selectedProject.metadata?.website_type || selectedProject.website_type || 'landing'}</p>
                 <p><strong>Generado:</strong> {selectedProject.metadata?.generated_at ? new Date(selectedProject.metadata.generated_at).toLocaleDateString() : selectedProject.created_at ? new Date(selectedProject.created_at).toLocaleDateString() : 'Desconocido'}</p>
                 {selectedProject.description && <p><strong>Descripción:</strong> {selectedProject.description}</p>}
