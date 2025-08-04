@@ -177,49 +177,114 @@ Esta acción NO se puede deshacer.`;
 
   const generateEnhancementSuggestions = async (project) => {
     setEnhancing(true);
+    setEnhancementSuggestions([]); // Clear previous suggestions
+    
     try {
+      console.log('Generating enhancement suggestions for project:', project.id);
+      
       const response = await axios.post(`${API_URL}/api/enhance-project`, {
         project_id: project.id,
         current_content: getProjectHTML(project),
         enhancement_type: 'suggestions'
       });
       
-      if (response.data.suggestions) {
+      console.log('Suggestions response:', response.data);
+      
+      if (response.data.success && response.data.suggestions) {
         setEnhancementSuggestions(response.data.suggestions);
+        showNotification('✨ Nuevas sugerencias de mejora generadas', 'info');
+      } else {
+        console.warn('No suggestions received from backend, using fallback');
+        // Enhanced fallback suggestions based on project analysis
+        const fallbackSuggestions = [
+          {
+            title: 'Mejorar Paleta de Colores',
+            description: 'Aplicar una paleta de colores moderna y profesional que mejore la legibilidad y el impacto visual',
+            impact: 'high',
+            icon: '🎨',
+            type: 'visual'
+          },
+          {
+            title: 'Agregar Animaciones CSS',
+            description: 'Incluir micro-interacciones y transiciones suaves para mejorar la experiencia de usuario',
+            impact: 'medium',
+            icon: '✨',
+            type: 'animation'
+          },
+          {
+            title: 'Optimizar Contenido',
+            description: 'Mejorar los textos, títulos y llamadas a la acción para mayor efectividad',
+            impact: 'high',
+            icon: '📝',
+            type: 'content'
+          },
+          {
+            title: 'Mejorar Responsive',
+            description: 'Optimizar el diseño para dispositivos móviles y tablets con mejores breakpoints',
+            impact: 'high',
+            icon: '📱',
+            type: 'responsive'
+          },
+          {
+            title: 'Agregar SEO Meta Tags',
+            description: 'Incluir meta tags, structured data y optimizaciones para motores de búsqueda',
+            impact: 'medium',
+            icon: '🔍',
+            type: 'seo'
+          }
+        ];
+        setEnhancementSuggestions(fallbackSuggestions);
+        showNotification('💡 Sugerencias predefinidas cargadas', 'info');
       }
     } catch (error) {
       console.error('Error generating suggestions:', error);
-      // Fallback suggestions
-      setEnhancementSuggestions([
-        {
-          type: 'visual',
-          title: 'Mejorar Paleta de Colores',
-          description: 'Actualizar esquema de colores para mayor impacto visual',
-          impact: 'high',
-          icon: '🎨'
-        },
-        {
-          type: 'functionality',
-          title: 'Agregar Animaciones',
-          description: 'Incluir micro-interacciones y transiciones suaves',
-          impact: 'medium',
-          icon: '✨'
-        },
-        {
-          type: 'content',
-          title: 'Optimizar Contenido',
-          description: 'Mejorar textos y llamadas a la acción',
-          impact: 'high',
-          icon: '📝'
-        },
-        {
-          type: 'performance',
-          title: 'Optimización SEO',
-          description: 'Mejorar meta tags y estructura para SEO',
-          impact: 'medium',
-          icon: '🚀'
+      
+      // Enhanced error handling with specific messages
+      let errorMessage = 'Error generando sugerencias: ';
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 403) {
+          errorMessage += 'Sin permisos para generar sugerencias.';
+        } else if (status === 429) {
+          errorMessage += 'Límite de solicitudes alcanzado.';
+        } else if (status === 500) {
+          errorMessage += 'Error del servidor. Verifica las API keys.';
+        } else {
+          errorMessage += `Error ${status}`;
         }
-      ]);
+      } else if (error.request) {
+        errorMessage += 'Sin conexión al servidor.';
+      } else {
+        errorMessage += 'Error inesperado.';
+      }
+      
+      // Always provide fallback suggestions even on error
+      const emergencySuggestions = [
+        {
+          title: '🎨 Cambiar Colores',
+          description: 'Actualizar paleta de colores completa',
+          impact: 'high',
+          icon: '🎨',
+          type: 'visual'
+        },
+        {
+          title: '📝 Mejorar Textos',
+          description: 'Optimizar contenido y copy del sitio',
+          impact: 'high',
+          icon: '📝',
+          type: 'content'
+        },
+        {
+          title: '📱 Optimizar Mobile',
+          description: 'Mejorar diseño responsive',
+          impact: 'high',
+          icon: '📱',
+          type: 'responsive'
+        }
+      ];
+      
+      setEnhancementSuggestions(emergencySuggestions);
+      showNotification(errorMessage, 'error');
     } finally {
       setEnhancing(false);
     }
