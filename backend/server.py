@@ -300,12 +300,42 @@ async def enhance_project(request: dict):
 
             logger.info(f"Enhanced prompt created: {enhanced_prompt[:100]}...")
 
-            # Use AI service to enhance the project
-            result = await ai_service.generate_website(
-                enhanced_prompt,
-                "openai",  # Default to OpenAI for enhancements
-                "enhancement"
-            )
+            # Use AI service to enhance the project with model selection
+            # Try to use the best available model for enhancements
+            provider = "openai"  # Default to OpenAI
+            model = "gpt-3.5-turbo"  # Default model
+            
+            # If OpenAI is not available, try local models
+            try:
+                result = await ai_service.generate_website(
+                    enhanced_prompt,
+                    provider,
+                    "enhancement", 
+                    model
+                )
+            except Exception as openai_error:
+                logger.warning(f"OpenAI failed, trying local model: {str(openai_error)}")
+                try:
+                    # Fallback to local models
+                    result = await ai_service.generate_website(
+                        enhanced_prompt,
+                        "local",
+                        "enhancement",
+                        "llama-3-8b"
+                    )
+                    provider = "local"
+                    model = "llama-3-8b"
+                except Exception as local_error:
+                    logger.warning(f"Local model failed, trying Gemini: {str(local_error)}")
+                    # Final fallback to Gemini
+                    result = await ai_service.generate_website(
+                        enhanced_prompt,
+                        "gemini",
+                        "enhancement",
+                        "gemini-1.5-flash"
+                    )
+                    provider = "gemini"
+                    model = "gemini-1.5-flash"
 
             logger.info(f"AI service result: {result.get('success', False)}")
 
