@@ -37,55 +37,55 @@ When generating websites, create:
 
 Always generate complete, production-ready code that looks professional and modern."""
         
-    async def create_chat_instance(self, provider: str, session_id: str = None) -> LlmChat:
-        """Create a new LlmChat instance for the specified provider"""
-        if not session_id:
-            session_id = str(uuid.uuid4())
+    async def create_chat_instance(self, provider: str, session_id: str, model: str = None):
+        """Create a chat instance based on the provider and specific model"""
+        system_message = SystemMessage(text=self.system_prompt)
+
+        # Model configurations with their token limits
+        model_configs = {
+            # OpenAI models
+            "gpt-3.5-turbo": {"provider": "openai", "max_tokens": 4096},
+            "gpt-4.1": {"provider": "openai", "max_tokens": 8192},
+            "gpt-4o": {"provider": "openai", "max_tokens": 8192},
             
-        system_message = """You are a world-class web developer and designer with expertise in creating professional, modern websites. 
+            # Gemini models  
+            "gemini-1.5-flash": {"provider": "gemini", "max_tokens": 8192},
+            "gemini-1.5-pro": {"provider": "gemini", "max_tokens": 8192},
+            "gemini-2.5-pro-preview": {"provider": "gemini", "max_tokens": 8192},
+        }
+        
+        # If no specific model provided, use defaults
+        if not model:
+            model = "gpt-3.5-turbo" if provider == "openai" else "gemini-1.5-pro"
+        
+        # Get model configuration
+        if model not in model_configs:
+            raise ValueError(f"Unsupported model: {model}")
+        
+        config = model_configs[model]
+        actual_provider = config["provider"]
+        max_tokens = config["max_tokens"]
 
-Your specialties include:
-- Modern responsive web design
-- Professional UI/UX principles
-- Clean, semantic HTML5
-- Advanced CSS3 with modern layouts (Grid, Flexbox)
-- Professional color schemes and typography
-- Business-ready components and sections
-- Performance optimization
-- Accessibility best practices
-
-When generating websites, create:
-- Professional, business-grade designs
-- Mobile-first responsive layouts
-- Modern color palettes with proper contrast
-- Clean typography with proper hierarchy
-- Interactive elements and smooth animations
-- Semantic HTML structure
-- Optimized CSS with modern techniques
-- Complete, ready-to-use websites
-
-Always generate complete, production-ready code that looks professional and modern."""
-
-        if provider == "openai":
+        if actual_provider == "openai":
             if not self.openai_key:
                 raise ValueError("OpenAI API key not found")
             chat = LlmChat(
                 api_key=self.openai_key,
                 session_id=session_id,
                 system_message=system_message
-            ).with_model("openai", "gpt-3.5-turbo").with_max_tokens(4096)
+            ).with_model("openai", model).with_max_tokens(max_tokens)
             
-        elif provider == "gemini":
+        elif actual_provider == "gemini":
             if not self.gemini_key:
                 raise ValueError("Gemini API key not found")
             chat = LlmChat(
                 api_key=self.gemini_key,
                 session_id=session_id,
                 system_message=system_message
-            ).with_model("gemini", "gemini-1.5-flash-002").with_max_tokens(8192)
+            ).with_model("gemini", model).with_max_tokens(max_tokens)
             
         else:
-            raise ValueError(f"Unsupported provider: {provider}")
+            raise ValueError(f"Unsupported provider: {actual_provider}")
             
         return chat
 
