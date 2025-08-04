@@ -763,7 +763,7 @@ export const ProjectGallery = ({ projects: propProjects = [] }) => {
                     <>
                       <h3 className="project-title">{project.name || `Sitio Web ${index + 1}`}</h3>
                       <p className="project-provider">
-                        Generado con {project.metadata?.provider === 'openai' ? '🤖 OpenAI' : project.provider === 'openai' ? '🤖 OpenAI' : '💎 Gemini 1.5'}
+                        Generado con {project.metadata?.provider === 'openai' ? '🤖 OpenAI' : project.provider === 'openai' ? '🤖 OpenAI' : '💎 Gemini Flash'}
                       </p>
                       <p className="project-type">
                         Tipo: {project.metadata?.website_type || project.website_type || 'landing'}
