@@ -1421,13 +1421,20 @@ Esta acción NO se puede deshacer.`;
                   <div className="chat-input-wrapper">
                     <textarea
                       value={chatInput}
-                      onChange={(e) => setChatInput(e.target.value)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        setChatInput(e.target.value);
+                      }}
                       onKeyDown={handleChatKeyPress}
+                      onKeyPress={(e) => e.stopPropagation()}
+                      onInput={(e) => e.stopPropagation()}
                       placeholder="Escribe qué quieres modificar... Ej: 'Agrega testimonios de clientes'"
                       className="chat-input"
                       rows="1"
                       disabled={isChatLoading}
                       style={{ resize: 'none', overflow: 'hidden' }}
+                      autoComplete="off"
+                      spellCheck="false"
                     />
                     <button
                       type="button"
