@@ -860,18 +860,49 @@ Esta acción NO se puede deshacer.`;
     return summary;
   };
 
-  // Generate next suggestions based on current modification
+  // Generate contextual suggestions based on user input
   const generateNextSuggestions = (userInput) => {
     const input = userInput.toLowerCase();
     
-    if (input.includes('testimonios')) {
-      return ['🎨 Cambiar colores de la sección', '📧 Agregar formulario', '📊 Agregar estadísticas'];
-    } else if (input.includes('contacto')) {
-      return ['💬 Agregar testimonios', '🗺️ Agregar mapa', '📞 Agregar info de contacto'];
-    } else if (input.includes('color')) {
-      return ['✨ Agregar animaciones', '📝 Mejorar textos', '🖼️ Optimizar imágenes'];
+    // Generate suggestions based on what the user just asked for
+    if (input.includes('testimonios') || input.includes('reseñas')) {
+      return [
+        '💼 Agregar sección de clientes',
+        '⭐ Mejorar valoraciones visuales',
+        '📸 Optimizar fotos de testimonios'
+      ];
+    } else if (input.includes('contacto') || input.includes('formulario')) {
+      return [
+        '🗺️ Agregar mapa de ubicación',
+        '📞 Mejorar información de contacto',
+        '✉️ Optimizar formulario de email'
+      ];
+    } else if (input.includes('color') || input.includes('colores')) {
+      return [
+        '🎨 Ajustar gradientes',
+        '✨ Mejorar animaciones',
+        '🖼️ Optimizar imágenes'
+      ];
+    } else if (input.includes('moderno') || input.includes('actualizar')) {
+      return [
+        '📱 Mejorar responsive',
+        '⚡ Agregar animaciones',
+        '🚀 Optimizar performance'
+      ];
+    } else if (input.includes('responsive') || input.includes('móvil') || input.includes('mobile')) {
+      return [
+        '📏 Ajustar breakpoints',
+        '👆 Mejorar navegación táctil',
+        '🔄 Optimizar imágenes responsive'
+      ];
     } else {
-      return ['🎯 Mejorar call-to-action', '📱 Optimizar mobile', '⚡ Agregar animaciones'];
+      // Generic next-step suggestions
+      return [
+        '🎨 Mejorar colores',
+        '📝 Optimizar textos',
+        '📱 Mejorar responsive',
+        '✨ Agregar animaciones'
+      ];
     }
   };
 
