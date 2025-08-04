@@ -906,18 +906,21 @@ Esta acción NO se puede deshacer.`;
     }
   };
 
-  // Enhanced key press handler for chat input
+  // Fixed key press handler for chat input - NO REFRESH BUG
   const handleChatKeyPress = (e) => {
+    // Prevent any form submission or page refresh
     if (e.key === 'Enter') {
       if (e.shiftKey) {
         // Shift + Enter = new line, allow default behavior
         return;
       } else {
-        // Enter = send message
+        // Enter = send message, prevent form submission
         e.preventDefault();
+        e.stopPropagation();
         sendChatMessage();
       }
     }
+    // For all other keys, do nothing special (no refresh)
   };
 
   // Project Summary Component
