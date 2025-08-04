@@ -176,29 +176,46 @@ async def get_ai_providers():
         "providers": [
             {
                 "id": "openai",
-                "name": "OpenAI GPT-4.1",
-                "description": "Latest and most advanced model for creative web design",
+                "name": "🤖 OpenAI GPT-3.5/4",
+                "description": "Latest GPT models via API - Creative web design",
                 "icon": "🤖",
-                "model": "gpt-4.1",
+                "model": "gpt-3.5-turbo",
                 "strengths": ["Creative Design", "Modern Layouts", "Interactive Elements"],
                 "speed": "fast",
                 "quality": "excellent"
             },
             {
                 "id": "gemini",
-                "name": "Google Gemini 2.5 Pro",
-                "description": "Powerful multimodal AI for sophisticated web development",
+                "name": "💎 Google Gemini 1.5",
+                "description": "Powerful multimodal AI via API - Technical excellence",
                 "icon": "💎",
-                "model": "gemini-2.5-pro-preview-05-06",
+                "model": "gemini-1.5-pro",
                 "strengths": ["Technical Excellence", "Responsive Design", "Performance"],
                 "speed": "very-fast",
                 "quality": "excellent"
+            },
+            {
+                "id": "local",
+                "name": "🔥 Local Open Source",
+                "description": "100% offline models - Llama, Mistral, Qwen y más",
+                "icon": "🏠",
+                "model": "llama-3-8b",
+                "strengths": ["100% Offline", "Sin API Keys", "Privacidad Total", "Sin Límites"],
+                "speed": "variable",
+                "quality": "excellent",
+                "special_features": ["Ollama", "LM Studio", "Private", "Unlimited"]
             }
         ],
         "comparison_mode": {
             "enabled": True,
             "description": "Generate with both providers and compare results",
             "benefits": ["See different approaches", "Choose best design", "Higher success rate"]
+        },
+        "local_info": {
+            "supported_platforms": ["Ollama", "LM Studio", "text-generation-webui", "vLLM"],
+            "auto_fallback": True,
+            "models_count": 20,
+            "installation_help": "https://ollama.ai"
         }
     }
 
