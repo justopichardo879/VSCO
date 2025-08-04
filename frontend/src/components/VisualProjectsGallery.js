@@ -906,10 +906,17 @@ Esta acción NO se puede deshacer.`;
     }
   };
 
+  // Enhanced key press handler for chat input
   const handleChatKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendChatMessage();
+    if (e.key === 'Enter') {
+      if (e.shiftKey) {
+        // Shift + Enter = new line, allow default behavior
+        return;
+      } else {
+        // Enter = send message
+        e.preventDefault();
+        sendChatMessage();
+      }
     }
   };
 
