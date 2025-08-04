@@ -1497,8 +1497,13 @@ Esta acción NO se puede deshacer.`;
               <h4>✏️ Edición Manual</h4>
               <div className="manual-tools">
                 <button 
+                  type="button"
                   className="manual-btn"
-                  onClick={() => applyManualEnhancement(livePreview, 'colors')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyManualEnhancement(livePreview, 'colors');
+                  }}
                   disabled={enhancing}
                 >
                   <span className="manual-icon">🎨</span>
