@@ -104,9 +104,15 @@ Always generate complete, production-ready code that looks professional and mode
             "zephyr-7b": {"provider": "local", "max_tokens": 8192, "type": "local", "category": "community", "size": "7B"},
         }
         
-        # If no specific model provided, use defaults
+        # If no specific model provided, use defaults with fallback priority
         if not model:
-            model = "gpt-3.5-turbo" if provider == "openai" else "gemini-1.5-pro"
+            if provider == "openai":
+                model = "gpt-3.5-turbo"
+            elif provider == "gemini":
+                model = "gemini-1.5-pro"
+            elif provider == "local":
+                # Default local model with fallback chain
+                model = "llama-3-8b"  # Start with most reliable
         
         # Get model configuration
         if model not in model_configs:
@@ -115,6 +121,7 @@ Always generate complete, production-ready code that looks professional and mode
         config = model_configs[model]
         actual_provider = config["provider"]
         max_tokens = config["max_tokens"]
+        model_type = config.get("type", "api")
 
         if actual_provider == "openai":
             if not self.openai_key:
@@ -134,10 +141,211 @@ Always generate complete, production-ready code that looks professional and mode
                 system_message=self.system_prompt
             ).with_model("gemini", model).with_max_tokens(max_tokens)
             
+        elif actual_provider == "local":
+            # 🔥 LOCAL MODEL HANDLING with auto-detection
+            chat = await self.create_local_chat_instance(model, session_id, max_tokens)
+            
         else:
             raise ValueError(f"Unsupported provider: {actual_provider}")
             
         return chat
+
+    async def create_local_chat_instance(self, model: str, session_id: str, max_tokens: int):
+        """Create a local model chat instance with auto-detection and fallback"""
+        
+        # Priority order for local AI platforms
+        local_endpoints = [
+            {"name": "Ollama", "url": "http://localhost:11434", "api_type": "ollama"},
+            {"name": "LM Studio", "url": "http://localhost:1234", "api_type": "openai"},
+            {"name": "text-generation-webui", "url": "http://localhost:5000", "api_type": "textgen"},
+            {"name": "vLLM", "url": "http://localhost:8000", "api_type": "openai"},
+        ]
+        
+        # Model name mapping for different platforms
+        model_mappings = {
+            # Llama 3 models
+            "llama-3-8b": ["llama3:8b", "llama3", "meta-llama/Llama-3-8B-Instruct"],
+            "llama-3-70b": ["llama3:70b", "llama3:70b-instruct", "meta-llama/Llama-3-70B-Instruct"],
+            
+            # Mistral models
+            "mixtral-8x22b": ["mixtral:8x22b", "mixtral:8x22b-instruct", "mistralai/Mixtral-8x22B-Instruct-v0.1"],
+            "mistral-7b": ["mistral:7b", "mistral", "mistralai/Mistral-7B-Instruct-v0.2"],
+            
+            # Qwen models
+            "qwen2-7b": ["qwen2:7b", "qwen2", "Qwen/Qwen2-7B-Instruct"],
+            "qwen2-72b": ["qwen2:72b", "qwen2:72b-instruct", "Qwen/Qwen2-72B-Instruct"],
+            
+            # Code models
+            "code-llama-34b": ["codellama:34b", "codellama:34b-instruct", "codellama/CodeLlama-34b-Instruct-hf"],
+            "deepseek-coder-33b": ["deepseek-coder:33b", "deepseek-coder", "deepseek-ai/deepseek-coder-33b-instruct"],
+            
+            # Community models
+            "nous-hermes-2-llama3": ["nous-hermes2:latest", "nous-hermes2", "NousResearch/Nous-Hermes-2-Llama-3-8B"],
+            "openhermes": ["openhermes", "openhermes:latest", "teknium/OpenHermes-2.5-Mistral-7B"],
+            "dolphin-mixtral": ["dolphin-mixtral", "dolphin-mixtral:latest", "cognitivecomputations/dolphin-2.6-mixtral-8x7b"],
+        }
+        
+        model_names = model_mappings.get(model, [model])
+        
+        # Try each local endpoint
+        for endpoint in local_endpoints:
+            try:
+                available_models = await self.check_local_endpoint(endpoint)
+                if available_models:
+                    # Find best matching model
+                    for model_name in model_names:
+                        if model_name in available_models:
+                            logger.info(f"Using local model {model_name} on {endpoint['name']}")
+                            return await self.create_local_client(endpoint, model_name, session_id, max_tokens)
+            except Exception as e:
+                logger.warning(f"Failed to connect to {endpoint['name']}: {str(e)}")
+                continue
+        
+        # If all local endpoints fail, raise error with helpful message
+        raise ValueError(f"""
+        🔥 LOCAL MODEL UNAVAILABLE: {model}
+        
+        No local AI platforms found. Please install and run one of:
+        • Ollama (recommended): https://ollama.ai
+        • LM Studio: https://lmstudio.ai  
+        • text-generation-webui: https://github.com/oobabooga/text-generation-webui
+        • vLLM: https://github.com/vllm-project/vllm
+        
+        Make sure the service is running and has the model downloaded.
+        """)
+
+    async def check_local_endpoint(self, endpoint: dict) -> list:
+        """Check if local AI endpoint is available and return available models"""
+        import aiohttp
+        
+        try:
+            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
+                if endpoint["api_type"] == "ollama":
+                    async with session.get(f"{endpoint['url']}/api/tags") as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            return [model["name"] for model in data.get("models", [])]
+                            
+                elif endpoint["api_type"] == "openai":
+                    # LM Studio / vLLM OpenAI-compatible API
+                    async with session.get(f"{endpoint['url']}/v1/models") as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            return [model["id"] for model in data.get("data", [])]
+                            
+                elif endpoint["api_type"] == "textgen":
+                    async with session.get(f"{endpoint['url']}/api/v1/models") as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            return data.get("data", [])
+                            
+        except Exception as e:
+            logger.debug(f"Endpoint check failed for {endpoint['name']}: {str(e)}")
+            return []
+        
+        return []
+
+    async def create_local_client(self, endpoint: dict, model_name: str, session_id: str, max_tokens: int):
+        """Create local AI client based on endpoint type"""
+        
+        if endpoint["api_type"] == "ollama":
+            # Use Ollama native API
+            return LocalOllamaChat(
+                endpoint_url=endpoint["url"],
+                model_name=model_name,
+                session_id=session_id,
+                system_message=self.system_prompt,
+                max_tokens=max_tokens
+            )
+        elif endpoint["api_type"] in ["openai", "textgen"]:
+            # Use OpenAI-compatible API (LM Studio, vLLM, text-gen-webui)
+            return LocalOpenAIChat(
+                endpoint_url=endpoint["url"],
+                model_name=model_name,
+                session_id=session_id,
+                system_message=self.system_prompt,
+                max_tokens=max_tokens
+            )
+        else:
+            raise ValueError(f"Unsupported local API type: {endpoint['api_type']}")
+
+
+# 🔥 LOCAL AI CLIENT CLASSES
+class LocalOllamaChat:
+    """Client for Ollama local AI models"""
+    
+    def __init__(self, endpoint_url: str, model_name: str, session_id: str, system_message: str, max_tokens: int):
+        self.endpoint_url = endpoint_url
+        self.model_name = model_name
+        self.session_id = session_id
+        self.system_message = system_message
+        self.max_tokens = max_tokens
+    
+    async def send_message(self, user_message):
+        """Send message to Ollama"""
+        import aiohttp
+        
+        payload = {
+            "model": self.model_name,
+            "prompt": f"System: {self.system_message}\n\nUser: {user_message.text}\n\nAssistant:",
+            "stream": False,
+            "options": {
+                "num_predict": self.max_tokens,
+                "temperature": 0.7
+            }
+        }
+        
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120)) as session:
+            async with session.post(f"{self.endpoint_url}/api/generate", json=payload) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return LocalResponse(data["response"])
+                else:
+                    raise Exception(f"Ollama API error: {response.status}")
+
+
+class LocalOpenAIChat:
+    """Client for OpenAI-compatible local AI models (LM Studio, vLLM, etc.)"""
+    
+    def __init__(self, endpoint_url: str, model_name: str, session_id: str, system_message: str, max_tokens: int):
+        self.endpoint_url = endpoint_url
+        self.model_name = model_name
+        self.session_id = session_id
+        self.system_message = system_message
+        self.max_tokens = max_tokens
+    
+    async def send_message(self, user_message):
+        """Send message to OpenAI-compatible API"""
+        import aiohttp
+        
+        payload = {
+            "model": self.model_name,
+            "messages": [
+                {"role": "system", "content": self.system_message},
+                {"role": "user", "content": user_message.text}
+            ],
+            "max_tokens": self.max_tokens,
+            "temperature": 0.7,
+            "stream": False
+        }
+        
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120)) as session:
+            async with session.post(f"{self.endpoint_url}/v1/chat/completions", json=payload) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    content = data["choices"][0]["message"]["content"]
+                    return LocalResponse(content)
+                else:
+                    error_text = await response.text()
+                    raise Exception(f"Local OpenAI API error: {response.status} - {error_text}")
+
+
+class LocalResponse:
+    """Response wrapper for local AI models"""
+    
+    def __init__(self, content: str):
+        self.content = content
+        self.text = content
 
     async def generate_website(self, prompt: str, provider: str, website_type: str = "landing", model: str = None) -> Dict[str, Any]:
         """Generate a complete website using the specified AI provider and model"""
