@@ -336,16 +336,27 @@ body {
   }
 }`;
 
-  // Inicializar código y cargar proyectos
+  // Inicializar código, cargar proyectos y manejar generación en tiempo real
   useEffect(() => {
     loadProjects();
-    if (projectId) {
+    
+    if (generationData) {
+      // Iniciar generación en tiempo real
+      startRealTimeGeneration(generationData);
+    } else if (projectId) {
       loadProject(projectId);
     } else if (!initialCode) {
       const template = templates[framework] || templates.react;
       setCode(template);
     }
-  }, [framework, initialCode, projectId]);
+    
+    // Cleanup al desmontar componente
+    return () => {
+      if (generationIntervalRef.current) {
+        clearInterval(generationIntervalRef.current);
+      }
+    };
+  }, [framework, initialCode, projectId, generationData]);
 
   // Función para cargar proyectos desde la API
   const loadProjects = async () => {
