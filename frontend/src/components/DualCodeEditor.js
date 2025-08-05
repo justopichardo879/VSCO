@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
 import SplitPane from 'react-split-pane';
 import * as Babel from '@babel/standalone';
+import axios from 'axios';
 import './DualCodeEditor.css';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 // 🔥 DUAL CODE EDITOR - TIEMPO REAL
 export const DualCodeEditor = ({ 
@@ -11,7 +14,8 @@ export const DualCodeEditor = ({
   onCodeChange = () => {},
   onError = () => {},
   theme = 'dark',
-  language = 'typescript'
+  language = 'typescript',
+  projectId = null // NEW: Para cargar proyectos existentes
 }) => {
   // Estados principales
   const [code, setCode] = useState(initialCode);
@@ -20,6 +24,12 @@ export const DualCodeEditor = ({
   const [errors, setErrors] = useState([]);
   const [isCompiling, setIsCompiling] = useState(false);
   const [currentTheme, setCurrentTheme] = useState(theme);
+  
+  // Estados para manejo de proyectos
+  const [projects, setProjects] = useState([]);
+  const [currentProject, setCurrentProject] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   
   // Referencias
   const editorRef = useRef(null);
