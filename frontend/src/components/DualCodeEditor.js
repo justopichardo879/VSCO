@@ -984,8 +984,12 @@ body {
         {/* Panel Izquierdo - Editor */}
         <div className="code-panel">
           <div className="panel-header">
-            <span className="panel-title">📝 Código</span>
-            <span className="language-badge">{language.toUpperCase()}</span>
+            <span className="panel-title">
+              {isGenerating ? '🤖 Generando Código...' : '📝 Código'}
+            </span>
+            <span className="language-badge">
+              {isGenerating ? 'IA' : language.toUpperCase()}
+            </span>
           </div>
           
           <Editor
