@@ -66,6 +66,7 @@ function App() {
         {activeView === 'code-editor' && (
           <DualCodeEditor 
             projectId={selectedProjectForEditing?.id}
+            generationData={generationInProgress}
             initialCode=""
             framework="html"
             onCodeChange={(code) => console.log('Code changed:', code)}
@@ -75,7 +76,9 @@ function App() {
             onBack={() => {
               setActiveView('generator');
               setSelectedProjectForEditing(null);
+              setGenerationInProgress(null);
             }}
+            onGenerationComplete={handleWebsiteGenerated}
           />
         )}
         
