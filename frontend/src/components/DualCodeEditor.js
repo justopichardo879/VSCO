@@ -15,8 +15,10 @@ export const DualCodeEditor = ({
   onError = () => {},
   theme = 'dark',
   language = 'typescript',
-  projectId = null, // NEW: Para cargar proyectos existentes
-  onBack = null // NEW: Función para volver atrás
+  projectId = null, // Para cargar proyectos existentes
+  onBack = null, // Función para volver atrás
+  generationData = null, // NEW: Datos para generación en tiempo real
+  onGenerationComplete = () => {} // NEW: Callback cuando se completa la generación
 }) => {
   // Estados principales
   const [code, setCode] = useState(initialCode);
