@@ -1030,12 +1030,15 @@ body {
         {/* Panel Derecho - Preview */}
         <div className="preview-panel">
           <div className="panel-header">
-            <span className="panel-title">👁️ Vista Previa</span>
+            <span className="panel-title">
+              {isGenerating ? '🔄 Vista Previa Generándose...' : '👁️ Vista Previa'}
+            </span>
             <div className="preview-controls">
               <button 
                 onClick={() => previewRef.current?.reload()}
                 className="refresh-btn"
                 title="Refrescar"
+                disabled={isGenerating}
               >
                 🔄
               </button>
@@ -1047,6 +1050,7 @@ body {
                 }}
                 className="fullscreen-btn"
                 title="Pantalla completa"
+                disabled={isGenerating}
               >
                 🔳
               </button>
