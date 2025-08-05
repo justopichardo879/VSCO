@@ -456,7 +456,193 @@ body {
     }
   };
 
-  // Función para crear nuevo proyecto
+  // Función para iniciar generación en tiempo real
+  const startRealTimeGeneration = async (genData) => {
+    setIsGenerating(true);
+    setGenerationProgress(0);
+    setGeneratedContent('');
+    setCurrentProject(null);
+    
+    const steps = [
+      { text: 'Inicializando modelo de IA...', duration: 2000 },
+      { text: 'Analizando tu solicitud...', duration: 1500 },
+      { text: 'Generando estructura HTML...', duration: 3000 },
+      { text: 'Creando estilos CSS...', duration: 2500 },
+      { text: 'Agregando interactividad JS...', duration: 2000 },
+      { text: 'Optimizando para dispositivos...', duration: 1500 },
+      { text: 'Finalizando código...', duration: 1000 }
+    ];
+
+    let currentStepIndex = 0;
+    let progressPerStep = 100 / steps.length;
+
+    // Simular generación paso a paso
+    const simulateGeneration = () => {
+      if (currentStepIndex < steps.length) {
+        const step = steps[currentStepIndex];
+        setGenerationStep(step.text);
+        setGenerationProgress((currentStepIndex + 1) * progressPerStep);
+        
+        // Simular código siendo generado progresivamente
+        simulateCodeGeneration(currentStepIndex, steps.length);
+        
+        currentStepIndex++;
+        setTimeout(simulateGeneration, step.duration);
+      } else {
+        // Generación completada, hacer llamada real a la API
+        finishRealGeneration(genData);
+      }
+    };
+
+    simulateGeneration();
+  };
+
+  // Simular código siendo escrito progresivamente
+  const simulateCodeGeneration = (stepIndex, totalSteps) => {
+    const htmlParts = [
+      `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Generando tu sitio web...</title>`,
+      
+      `    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;`,
+            
+      `            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);`,
+            
+      `            text-align: center;
+            max-width: 600px;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1rem;`,
+            
+      `            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }`,
+        
+      `        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>`,
+      
+      `<body>
+    <div class="container">
+        <h1 class="title">🎨 Tu Sitio Web Está Listo</h1>
+        <p class="subtitle">Generado con inteligencia artificial avanzada</p>
+        <div class="features">
+            <div class="feature">✨ Diseño moderno</div>
+            <div class="feature">📱 Totalmente responsive</div>
+            <div class="feature">⚡ Optimizado</div>
+        </div>
+    </div>
+</body>
+</html>`
+    ];
+
+    // Mostrar partes progresivamente
+    const partialContent = htmlParts.slice(0, Math.ceil((stepIndex + 1) * htmlParts.length / totalSteps)).join('\n');
+    setCode(partialContent);
+    setGeneratedContent(partialContent);
+  };
+
+  // Finalizar con generación real de la API
+  const finishRealGeneration = async (genData) => {
+    try {
+      setGenerationStep('🤖 Procesando con IA...');
+      
+      const response = await axios.post(`${API_URL}/api/generate-website`, {
+        prompt: genData.prompt,
+        website_type: genData.websiteType,
+        provider: genData.provider,
+        model: genData.model
+      });
+
+      if (response.data.success) {
+        // Extraer HTML del proyecto generado
+        let finalHtml = '';
+        const files = response.data.files;
+        
+        if (Array.isArray(files)) {
+          const htmlFile = files.find(f => f.filename && f.filename.toLowerCase().includes('html'));
+          if (htmlFile && htmlFile.content) {
+            finalHtml = htmlFile.content;
+          }
+        } else if (typeof files === 'object') {
+          finalHtml = files['index.html'] || files['main.html'] || '';
+        }
+
+        if (finalHtml) {
+          setCode(finalHtml);
+          setGeneratedContent(finalHtml);
+          setCurrentProject(response.data);
+        }
+
+        setGenerationStep('✅ ¡Generación completada!');
+        onGenerationComplete(response.data);
+        
+        // Ocultar indicador de generación después de un momento
+        setTimeout(() => {
+          setIsGenerating(false);
+          setGenerationStep('');
+          setGenerationProgress(0);
+        }, 2000);
+
+      } else {
+        throw new Error(response.data.error || 'Error en la generación');
+      }
+    } catch (error) {
+      console.error('Error en generación real:', error);
+      setGenerationStep('❌ Error en la generación');
+      setErrors([error.message]);
+      
+      setTimeout(() => {
+        setIsGenerating(false);
+        setGenerationStep('');
+        setGenerationProgress(0);
+      }, 3000);
+    }
+  };
   const createNewProject = async () => {
     const projectName = prompt('Nombre del nuevo proyecto:');
     if (!projectName) return;
