@@ -1012,13 +1012,14 @@ body {
               automaticLayout: true,
               tabSize: 2,
               wordWrap: 'on',
+              readOnly: isGenerating, // Deshabilitar durante generación
               suggest: {
-                enabled: true,
+                enabled: !isGenerating,
                 showKeywords: true,
                 showSnippets: true,
               },
               quickSuggestions: {
-                other: true,
+                other: !isGenerating,
                 comments: false,
                 strings: false
               },
