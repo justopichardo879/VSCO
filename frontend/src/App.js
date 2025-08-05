@@ -48,17 +48,23 @@ function App() {
           <VisualProjectsGallery 
             projects={generatedProjects} 
             onBack={() => setActiveView('generator')}
+            onEditProject={handleEditProject}
           />
         )}
         
         {activeView === 'code-editor' && (
           <DualCodeEditor 
+            projectId={selectedProjectForEditing?.id}
             initialCode=""
-            framework="react"
+            framework="html"
             onCodeChange={(code) => console.log('Code changed:', code)}
             onError={(error) => console.error('Editor error:', error)}
             theme="dark"
-            language="typescript"
+            language="html"
+            onBack={() => {
+              setActiveView('generator');
+              setSelectedProjectForEditing(null);
+            }}
           />
         )}
         
