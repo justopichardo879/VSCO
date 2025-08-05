@@ -14,9 +14,15 @@ import { DualCodeEditor } from './components/DualCodeEditor';
 function App() {
   const [activeView, setActiveView] = useState('generator');
   const [generatedProjects, setGeneratedProjects] = useState([]);
+  const [selectedProjectForEditing, setSelectedProjectForEditing] = useState(null);
 
   const handleWebsiteGenerated = (project) => {
     setGeneratedProjects(prev => [project, ...prev]);
+  };
+
+  const handleEditProject = (project) => {
+    setSelectedProjectForEditing(project);
+    setActiveView('code-editor');
   };
 
   return (
