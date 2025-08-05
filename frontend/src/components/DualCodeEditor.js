@@ -986,7 +986,7 @@ body {
         className="split-pane-custom"
       >
         {/* Panel Izquierdo - Editor */}
-        <div className="code-panel">
+        <div className={`code-panel ${isGenerating ? 'generating' : ''}`}>
           <div className="panel-header">
             <span className="panel-title">
               {isGenerating ? '🤖 Generando Código...' : '📝 Código'}
