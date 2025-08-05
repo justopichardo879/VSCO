@@ -859,11 +859,28 @@ body {
             )}
             <span className="icon">⚡</span>
             <h3>Editor de Código en Tiempo Real</h3>
-            {isCompiling && <span className="compiling-indicator">🔄 Compilando...</span>}
-            {currentProject && (
-              <span className="current-project">
-                📄 {currentProject.name || 'Proyecto sin nombre'}
-              </span>
+            {isGenerating ? (
+              <div className="generation-status">
+                <span className="generating-indicator">
+                  <span className="spinner-icon">🔄</span>
+                  {generationStep}
+                </span>
+                <div className="generation-progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${generationProgress}%` }}
+                  ></div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {isCompiling && <span className="compiling-indicator">🔄 Compilando...</span>}
+                {currentProject && (
+                  <span className="current-project">
+                    📄 {currentProject.name || 'Proyecto sin nombre'}
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
