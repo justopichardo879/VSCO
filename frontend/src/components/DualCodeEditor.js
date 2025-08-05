@@ -15,7 +15,8 @@ export const DualCodeEditor = ({
   onError = () => {},
   theme = 'dark',
   language = 'typescript',
-  projectId = null // NEW: Para cargar proyectos existentes
+  projectId = null, // NEW: Para cargar proyectos existentes
+  onBack = null // NEW: Función para volver atrás
 }) => {
   // Estados principales
   const [code, setCode] = useState(initialCode);
