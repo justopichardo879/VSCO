@@ -900,7 +900,7 @@ body {
               }
             }}
             className="project-selector"
-            disabled={loading}
+            disabled={loading || isGenerating}
           >
             <option value="">➕ Nuevo Proyecto</option>
             {projects.map(project => (
@@ -914,11 +914,12 @@ body {
             value={framework} 
             onChange={(e) => {
               const newFramework = e.target.value;
-              if (!currentProject) {
+              if (!currentProject && !isGenerating) {
                 setCode(templates[newFramework]);
               }
             }}
             className="framework-selector"
+            disabled={isGenerating}
           >
             <option value="react">⚛️ React</option>
             <option value="nextjs">▲ Next.js</option>
@@ -928,13 +929,14 @@ body {
           <button
             onClick={() => setCurrentTheme(currentTheme === 'dark' ? 'light' : 'dark')}
             className="theme-toggle"
+            disabled={isGenerating}
           >
             {currentTheme === 'dark' ? '☀️' : '🌙'}
           </button>
           
           <button 
             onClick={saveProject}
-            disabled={saving || loading}
+            disabled={saving || loading || isGenerating}
             className="save-btn"
           >
             {saving ? '💾 Guardando...' : '💾 Guardar'}
@@ -946,6 +948,7 @@ body {
               alert('¡Código copiado al portapapeles!');
             }}
             className="copy-btn"
+            disabled={isGenerating}
           >
             📋 Copiar
           </button>
@@ -960,6 +963,7 @@ body {
               a.click();
             }}
             className="download-btn"
+            disabled={isGenerating}
           >
             💾 Descargar
           </button>
