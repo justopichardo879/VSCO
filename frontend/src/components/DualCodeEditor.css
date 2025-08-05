@@ -175,6 +175,15 @@
   background: #fd79a8;
 }
 
+.save-btn {
+  background: #00b894;
+  font-weight: 600;
+}
+
+.save-btn:disabled {
+  background: #95a5a6;
+}
+
 /* =====================================
    ERROR BANNER
    ===================================== */
