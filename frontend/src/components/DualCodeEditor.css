@@ -43,6 +43,37 @@
   gap: 0.5rem;
   font-size: 1.1rem;
   font-weight: 600;
+  flex: 1;
+}
+
+.title-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-button {
+  background: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.back-button:hover {
+  background: #5a4fcf;
+  transform: translateY(-1px);
+}
+
+.back-button .icon {
+  font-size: 1.2rem;
 }
 
 .editor-title .icon {
