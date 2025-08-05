@@ -644,14 +644,22 @@ body {
       {/* Header con controles */}
       <div className="editor-header">
         <div className="editor-title">
-          <span className="icon">⚡</span>
-          <h3>Editor de Código en Tiempo Real</h3>
-          {isCompiling && <span className="compiling-indicator">🔄 Compilando...</span>}
-          {currentProject && (
-            <span className="current-project">
-              📄 {currentProject.name || 'Proyecto sin nombre'}
-            </span>
-          )}
+          <div className="title-left">
+            {onBack && (
+              <button className="back-button" onClick={onBack}>
+                <span className="icon">←</span>
+                Volver
+              </button>
+            )}
+            <span className="icon">⚡</span>
+            <h3>Editor de Código en Tiempo Real</h3>
+            {isCompiling && <span className="compiling-indicator">🔄 Compilando...</span>}
+            {currentProject && (
+              <span className="current-project">
+                📄 {currentProject.name || 'Proyecto sin nombre'}
+              </span>
+            )}
+          </div>
         </div>
         
         <div className="editor-controls">
