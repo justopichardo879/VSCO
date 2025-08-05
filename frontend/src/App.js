@@ -21,7 +21,7 @@ function App() {
 
   return (
     <div className="app-container">
-      {activeView !== 'projects' && (
+      {activeView !== 'projects' && activeView !== 'code-editor' && (
         <Header activeView={activeView} onViewChange={setActiveView} />
       )}
       
