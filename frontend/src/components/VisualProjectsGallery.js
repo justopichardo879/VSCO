@@ -1143,6 +1143,15 @@ Esta acción NO se puede deshacer.`;
                 </button>
                 <button className="action-btn secondary" onClick={(e) => {
                   e.stopPropagation();
+                  if (onEditProject) {
+                    onEditProject(project);
+                  }
+                }}>
+                  <span className="icon">⚡</span>
+                  Editor
+                </button>
+                <button className="action-btn secondary" onClick={(e) => {
+                  e.stopPropagation();
                   // Download functionality
                 }}>
                   <span className="icon">⬇️</span>
