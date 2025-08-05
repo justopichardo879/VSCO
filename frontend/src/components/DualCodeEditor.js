@@ -1033,7 +1033,7 @@ body {
         </div>
 
         {/* Panel Derecho - Preview */}
-        <div className="preview-panel">
+        <div className={`preview-panel ${isGenerating ? 'generating' : ''}`}>
           <div className="panel-header">
             <span className="panel-title">
               {isGenerating ? '🔄 Vista Previa Generándose...' : '👁️ Vista Previa'}
