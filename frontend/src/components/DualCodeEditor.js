@@ -34,10 +34,17 @@ export const DualCodeEditor = ({
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   
+  // Estados para generación en tiempo real
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStep, setGenerationStep] = useState('');
+  const [generationProgress, setGenerationProgress] = useState(0);
+  const [generatedContent, setGeneratedContent] = useState('');
+  
   // Referencias
   const editorRef = useRef(null);
   const previewRef = useRef(null);
   const compileTimeoutRef = useRef(null);
+  const generationIntervalRef = useRef(null);
 
   // Templates iniciales para diferentes frameworks
   const templates = {
