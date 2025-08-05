@@ -646,14 +646,45 @@ body {
           <span className="icon">⚡</span>
           <h3>Editor de Código en Tiempo Real</h3>
           {isCompiling && <span className="compiling-indicator">🔄 Compilando...</span>}
+          {currentProject && (
+            <span className="current-project">
+              📄 {currentProject.name || 'Proyecto sin nombre'}
+            </span>
+          )}
         </div>
         
         <div className="editor-controls">
+          {/* Selector de proyecto */}
+          <select 
+            value={currentProject?.id || ''} 
+            onChange={(e) => {
+              if (e.target.value) {
+                loadProject(e.target.value);
+              } else {
+                // Crear nuevo proyecto
+                setCurrentProject(null);
+                const template = templates[framework] || templates.react;
+                setCode(template);
+              }
+            }}
+            className="project-selector"
+            disabled={loading}
+          >
+            <option value="">➕ Nuevo Proyecto</option>
+            {projects.map(project => (
+              <option key={project.id} value={project.id}>
+                📄 {project.name || `Proyecto ${project.id.slice(-4)}`}
+              </option>
+            ))}
+          </select>
+          
           <select 
             value={framework} 
             onChange={(e) => {
               const newFramework = e.target.value;
-              setCode(templates[newFramework]);
+              if (!currentProject) {
+                setCode(templates[newFramework]);
+              }
             }}
             className="framework-selector"
           >
@@ -667,6 +698,14 @@ body {
             className="theme-toggle"
           >
             {currentTheme === 'dark' ? '☀️' : '🌙'}
+          </button>
+          
+          <button 
+            onClick={saveProject}
+            disabled={saving || loading}
+            className="save-btn"
+          >
+            {saving ? '💾 Guardando...' : '💾 Guardar'}
           </button>
           
           <button 
@@ -685,7 +724,7 @@ body {
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
-              a.download = `app.${framework === 'html' ? 'html' : 'js'}`;
+              a.download = `${currentProject?.name || 'app'}.${framework === 'html' ? 'html' : 'js'}`;
               a.click();
             }}
             className="download-btn"
