@@ -45,6 +45,17 @@ function App() {
           />
         )}
         
+        {activeView === 'code-editor' && (
+          <DualCodeEditor 
+            initialCode=""
+            framework="react"
+            onCodeChange={(code) => console.log('Code changed:', code)}
+            onError={(error) => console.error('Editor error:', error)}
+            theme="dark"
+            language="typescript"
+          />
+        )}
+        
         {activeView === 'about' && (
           <div className="about-section">
             <div className="container">
