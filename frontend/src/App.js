@@ -15,6 +15,7 @@ function App() {
   const [activeView, setActiveView] = useState('generator');
   const [generatedProjects, setGeneratedProjects] = useState([]);
   const [selectedProjectForEditing, setSelectedProjectForEditing] = useState(null);
+  const [generationInProgress, setGenerationInProgress] = useState(null);
 
   const handleWebsiteGenerated = (project) => {
     setGeneratedProjects(prev => [project, ...prev]);
@@ -22,7 +23,14 @@ function App() {
 
   const handleEditProject = (project) => {
     setSelectedProjectForEditing(project);
+    setGenerationInProgress(null); // Limpiar generación en progreso
     setActiveView('code-editor');
+  };
+
+  const handleStartGeneration = (generationData) => {
+    setGenerationInProgress(generationData);
+    setSelectedProjectForEditing(null); // Limpiar proyecto seleccionado
+    setActiveView('code-editor'); // Navegar inmediatamente al editor
   };
 
   return (
