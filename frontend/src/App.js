@@ -80,7 +80,7 @@ function App() {
         )}
       </main>
       
-      {activeView !== 'projects' && <Footer />}
+      {activeView !== 'projects' && activeView !== 'code-editor' && <Footer />}
     </div>
   );
 }
