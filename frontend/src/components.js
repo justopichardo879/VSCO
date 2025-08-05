@@ -107,7 +107,7 @@ export const HeroSection = () => {
 // =====================================
 // WEBSITE GENERATOR COMPONENT
 // =====================================
-export const WebsiteGenerator = ({ onWebsiteGenerated }) => {
+export const WebsiteGenerator = ({ onWebsiteGenerated, onNavigateToEditor }) => {
   const [prompt, setPrompt] = useState('');
   const [websiteType, setWebsiteType] = useState('landing');
   const [provider, setProvider] = useState('openai');
