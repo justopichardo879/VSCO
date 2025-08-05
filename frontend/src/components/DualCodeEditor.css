@@ -84,7 +84,8 @@
   gap: 1rem;
 }
 
-.framework-selector {
+.framework-selector,
+.project-selector {
   background: #404040;
   color: #ffffff;
   border: 1px solid #555;
@@ -93,17 +94,29 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 150px;
 }
 
-.dual-code-editor.light .framework-selector {
+.dual-code-editor.light .framework-selector,
+.dual-code-editor.light .project-selector {
   background: #ffffff;
   color: #333333;
   border: 1px solid #ddd;
 }
 
-.framework-selector:hover {
+.framework-selector:hover,
+.project-selector:hover {
   background: #4a4a4a;
   border-color: #666;
+}
+
+.project-selector {
+  min-width: 200px;
+}
+
+.project-selector:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .theme-toggle,
