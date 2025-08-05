@@ -326,13 +326,147 @@ body {
   }
 }`;
 
-  // Inicializar código
+  // Inicializar código y cargar proyectos
   useEffect(() => {
-    if (!initialCode) {
+    loadProjects();
+    if (projectId) {
+      loadProject(projectId);
+    } else if (!initialCode) {
       const template = templates[framework] || templates.react;
       setCode(template);
     }
-  }, [framework, initialCode]);
+  }, [framework, initialCode, projectId]);
+
+  // Función para cargar proyectos desde la API
+  const loadProjects = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/api/projects`);
+      if (response.data && response.data.projects) {
+        setProjects(response.data.projects);
+      }
+    } catch (error) {
+      console.error('Error cargando proyectos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Función para cargar un proyecto específico
+  const loadProject = async (id) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/api/projects/${id}`);
+      if (response.data && response.data.success) {
+        const project = response.data.project;
+        setCurrentProject(project);
+        
+        // Extraer código HTML del proyecto
+        let htmlContent = '';
+        if (project.files && Array.isArray(project.files)) {
+          const htmlFile = project.files.find(file => 
+            file.filename && file.filename.toLowerCase().includes('html')
+          );
+          if (htmlFile && htmlFile.content) {
+            htmlContent = htmlFile.content;
+          }
+        } else if (project.files && typeof project.files === 'object') {
+          htmlContent = project.files['index.html'] || project.files['main.html'] || '';
+        }
+        
+        if (htmlContent) {
+          setCode(htmlContent);
+          setCurrentTheme('light'); // HTML se ve mejor en tema claro
+        } else {
+          // Si no hay HTML, usar template por defecto
+          const template = templates[framework] || templates.react;
+          setCode(template);
+        }
+      }
+    } catch (error) {
+      console.error('Error cargando proyecto:', error);
+      setErrors(['Error cargando proyecto: ' + error.message]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Función para guardar proyecto
+  const saveProject = async () => {
+    if (!currentProject) {
+      // Crear nuevo proyecto
+      return await createNewProject();
+    }
+
+    try {
+      setSaving(true);
+      
+      // Actualizar el proyecto existente
+      const updatedFiles = currentProject.files.map(file => {
+        if (file.filename && file.filename.toLowerCase().includes('html')) {
+          return { ...file, content: code };
+        }
+        return file;
+      });
+
+      // Si no había archivo HTML, crear uno
+      if (!updatedFiles.some(f => f.filename && f.filename.toLowerCase().includes('html'))) {
+        updatedFiles.push({
+          filename: 'index.html',
+          content: code
+        });
+      }
+
+      const response = await axios.put(`${API_URL}/api/projects/${currentProject.id}`, {
+        name: currentProject.name,
+        description: currentProject.description,
+        files: updatedFiles
+      });
+
+      if (response.data.success) {
+        alert('✅ Proyecto guardado exitosamente');
+        await loadProjects(); // Recargar lista de proyectos
+      }
+    } catch (error) {
+      console.error('Error guardando proyecto:', error);
+      alert('❌ Error guardando proyecto: ' + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Función para crear nuevo proyecto
+  const createNewProject = async () => {
+    const projectName = prompt('Nombre del nuevo proyecto:');
+    if (!projectName) return;
+
+    try {
+      setSaving(true);
+      
+      const response = await axios.post(`${API_URL}/api/generate-website`, {
+        prompt: `Crear proyecto personalizado: ${projectName}`,
+        website_type: 'landing',
+        provider: 'openai',
+        files: [{
+          filename: 'index.html',
+          content: code
+        }],
+        name: projectName,
+        description: 'Proyecto creado desde el editor de código'
+      });
+
+      if (response.data.success) {
+        setCurrentProject(response.data);
+        alert('✅ Nuevo proyecto creado exitosamente');
+        await loadProjects();
+      }
+    } catch (error) {
+      console.error('Error creando proyecto:', error);
+      alert('❌ Error creando proyecto: ' + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // Compilar código en tiempo real
   const compileCode = useCallback(async (sourceCode) => {
