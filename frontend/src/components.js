@@ -234,6 +234,19 @@ export const WebsiteGenerator = ({ onWebsiteGenerated, onNavigateToEditor }) => 
       return;
     }
 
+    // ⚡ NAVEGAR INMEDIATAMENTE AL EDITOR
+    const generationData = {
+      prompt,
+      websiteType,
+      provider,
+      model: model || undefined
+    };
+    
+    // Navegar al editor con los datos de generación
+    if (onNavigateToEditor) {
+      onNavigateToEditor(generationData);
+    }
+
     setIsGenerating(true);
     setGenerationProgress(0);
     
@@ -247,7 +260,7 @@ export const WebsiteGenerator = ({ onWebsiteGenerated, onNavigateToEditor }) => 
       'Finalizando tu sitio web...'
     ];
 
-    // Simular progreso
+    // Simular progreso (esto ahora se hará en el editor)
     for (let i = 0; i < steps.length; i++) {
       setCurrentStep(steps[i]);
       setGenerationProgress((i + 1) / steps.length * 100);
