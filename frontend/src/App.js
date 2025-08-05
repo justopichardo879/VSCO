@@ -43,7 +43,10 @@ function App() {
         {activeView === 'generator' && (
           <>
             <HeroSection />
-            <WebsiteGenerator onWebsiteGenerated={handleWebsiteGenerated} />
+            <WebsiteGenerator 
+              onWebsiteGenerated={handleWebsiteGenerated}
+              onNavigateToEditor={handleStartGeneration}
+            />
             <FeatureGrid />
           </>
         )}
