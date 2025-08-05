@@ -39,6 +39,13 @@ export const Header = ({ activeView, onViewChange }) => {
               Proyectos
             </button>
             <button 
+              className={`nav-item ${activeView === 'code-editor' ? 'active' : ''}`}
+              onClick={() => onViewChange('code-editor')}
+            >
+              <span className="nav-icon">⚡</span>
+              Editor
+            </button>
+            <button 
               className={`nav-item ${activeView === 'about' ? 'active' : ''}`}
               onClick={() => onViewChange('about')}
             >
