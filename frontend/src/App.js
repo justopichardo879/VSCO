@@ -9,6 +9,7 @@ import {
   Footer
 } from './components';
 import { VisualProjectsGallery } from './components/VisualProjectsGallery';
+import { DualCodeEditor } from './components/DualCodeEditor';
 
 function App() {
   const [activeView, setActiveView] = useState('generator');
